@@ -1,6 +1,6 @@
-package com.ldx.tricolor.decoder;
+package com.ldx.tricolor.worker.decoder;
 
-import com.ldx.tricolor.core.Intermediates;
+import com.ldx.tricolor.assemblyline.Intermediates;
 
 import rx.functions.Func1;
 

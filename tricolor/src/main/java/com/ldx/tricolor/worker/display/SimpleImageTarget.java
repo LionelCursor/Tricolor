@@ -1,8 +1,8 @@
-package com.ldx.tricolor.display;
+package com.ldx.tricolor.worker.display;
 
 import android.widget.ImageView;
 
-import com.ldx.tricolor.core.Intermediates;
+import com.ldx.tricolor.assemblyline.Intermediates;
 
 import java.lang.ref.WeakReference;
 
@@ -17,7 +17,7 @@ public class SimpleImageTarget implements ImageTarget {
   private WeakReference<ImageView> reference;
 
   public SimpleImageTarget(ImageView view) {
-    this.reference = new WeakReference<>(view);
+    reference = new WeakReference<>(view);
   }
 
   @Override

@@ -1,19 +1,19 @@
-package com.ldx.tricolor.core;
+package com.ldx.tricolor.api;
 
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import com.ldx.tricolor.core.Request.RequestOptions;
-import com.ldx.tricolor.decoder.ImageDecoder;
-import com.ldx.tricolor.disk.DiskCacheFunc;
-import com.ldx.tricolor.fetcher.ImageFetcher;
-import com.ldx.tricolor.memory.MemoryCacheFunc;
-import com.ldx.tricolor.processor.ImageProcessor;
+import com.ldx.tricolor.api.Request.RequestOptions;
+import com.ldx.tricolor.assemblyline.RequestAssemblyLine;
+import com.ldx.tricolor.assemblyline.RxRequestAssemblyLine.KeyGenerator;
+import com.ldx.tricolor.worker.decoder.ImageDecoder;
+import com.ldx.tricolor.worker.disk.DiskCacheFunc;
+import com.ldx.tricolor.worker.fetcher.ImageFetcher;
+import com.ldx.tricolor.worker.memory.MemoryCacheFunc;
+import com.ldx.tricolor.worker.processor.ImageProcessor;
 
 import java.io.File;
-
-import rx.functions.Func1;
 
 /**
  * Main class of Tricolor providing load methods for users.
@@ -27,28 +27,28 @@ public class Tricolor {
 
   public static final String TAG = Tricolor.class.getSimpleName();
 
-  // Global variable of tricolor
+  // Global variables of tricolor
+  private Context context;
 
-  Context context;
+  private boolean isLoggingEnabled;
 
-  MemoryCacheFunc memoryCacheFunc;
+  private RequestOptions defaultRequestOptions;
 
-  DiskCacheFunc diskCacheFunc;
+  // Global workers
+  private MemoryCacheFunc memoryCacheFunc;
 
-  ImageDecoder imageDecoder;
+  private DiskCacheFunc diskCacheFunc;
 
-  ImageProcessor imageProcessor;
+  private ImageDecoder imageDecoder;
 
-  ImageFetcher fetcher;
+  private ImageProcessor imageProcessor;
 
-  boolean isLoggingEnabled;
+  private ImageFetcher fetcher;
 
-  RequestOptions defaultRequestOptions;
-
-  KeyGenerator keyGenerator;
+  private KeyGenerator keyGenerator;
 
   // Private variable of this tricolor
-  private RequestExecutor requestExecutor;
+  private RequestAssemblyLine requestAssemblyLine;
 
   // Lazy loading singleton instance.
   private static volatile Tricolor singleton = null;
@@ -63,7 +63,38 @@ public class Tricolor {
     isLoggingEnabled = builder.isLoggingEnabled;
     defaultRequestOptions = builder.defaultRequestOptions;
     keyGenerator = builder.keyGenerator;
-    requestExecutor = builder.requestExecutor;
+    requestAssemblyLine = builder.requestAssemblyLine;
+    // Note
+    requestAssemblyLine.with(this);
+  }
+
+  /**
+   * Init your own configured Tricolor instance for the singleton to be used to load images.
+   *
+   * @throws IllegalArgumentException
+   * @throws IllegalStateException
+   */
+  public static void init(Context context) {
+    init(new Builder(context).build());
+  }
+
+  /**
+   * Init your own configured Tricolor instance for the singleton to be used to load images.
+   *
+   * @param instance This instance will set to singleton.
+   * @throws IllegalArgumentException
+   * @throws IllegalStateException
+   */
+  public static void init(Tricolor instance) {
+    if (instance == null) {
+      throw new IllegalArgumentException("Instance passed in can not be null");
+    }
+    synchronized (Tricolor.class) {
+      if (singleton != null) {
+        throw new IllegalStateException("Init should be used first of all other use.");
+      }
+      singleton = instance;
+    }
   }
 
   // Get the singleton
@@ -107,7 +138,7 @@ public class Tricolor {
       Log.e(TAG, "Dispatched request " + request);
     }
     // Dispatch this request. Let it be executed.
-    requestExecutor.execute(request);
+    requestAssemblyLine.execute(request);
   }
 
   public void pause() {
@@ -118,48 +149,45 @@ public class Tricolor {
     // TODO not impl
   }
 
-  public interface KeyGenerator extends Func1<Intermediates, Intermediates> {
+
+
+    public Context getContext() {
+    return context;
   }
 
-  public static class BaseKeyGenerator implements KeyGenerator {
+  public MemoryCacheFunc getMemoryCacheFunc() {
+    return memoryCacheFunc;
+  }
 
-    @Override
-    public Intermediates call(Intermediates intermediates) {
-      if (intermediates == null) {
-        throw new IllegalStateException("Intermediates can not be null.");
-      }
-      Request request = intermediates.getRawRequest();
-      if (request == null) {
-        throw new IllegalStateException("Request of intermediates can not be null.");
-      }
-      intermediates.key = request.uri + "-" + request.options.width + "x" + request.options.height;
-      return intermediates;
-    }
+  public DiskCacheFunc getDiskCacheFunc() {
+    return diskCacheFunc;
+  }
+
+  public ImageDecoder getImageDecoder() {
+    return imageDecoder;
+  }
+
+  public ImageProcessor getImageProcessor() {
+    return imageProcessor;
+  }
+
+  public ImageFetcher getFetcher() {
+    return fetcher;
+  }
+
+  public boolean isLoggingEnabled() {
+    return isLoggingEnabled;
+  }
+
+  public RequestOptions getDefaultRequestOptions() {
+    return defaultRequestOptions;
+  }
+
+  public KeyGenerator getKeyGenerator() {
+    return keyGenerator;
   }
 
 
-  /**
-   * Init your own configured Tricolor instance for the singleton to be used to load images.
-   *
-   * @param instance This instance will set to singleton.
-   * @throws IllegalArgumentException
-   * @throws IllegalStateException
-   */
-  public static void init(Tricolor instance) {
-    if (instance == null) {
-      throw new IllegalArgumentException("Instance passed in can not be null");
-    }
-    synchronized (Tricolor.class) {
-      if (singleton != null) {
-        throw new IllegalStateException("Init should be used first of all other use.");
-      }
-      singleton = instance;
-    }
-  }
-
-  public static void init(Context context) {
-    init(new Builder(context).build());
-  }
 
   /**
    * Builder for Tricolor
@@ -169,7 +197,7 @@ public class Tricolor {
     private boolean isLoggingEnabled = false;
     private RequestOptions defaultRequestOptions;
     private KeyGenerator keyGenerator;
-    private RequestExecutor requestExecutor;
+    private RequestAssemblyLine requestAssemblyLine;
     private DiskCacheFunc diskCacheFunc;
     private ImageDecoder imageDecoder;
     private ImageProcessor imageProcessor;
@@ -188,8 +216,8 @@ public class Tricolor {
 
     public Tricolor build() {
 
-      if (requestExecutor == null) {
-        requestExecutor = DefaultConfig.defaultRequestExecutor();
+      if (requestAssemblyLine == null) {
+        requestAssemblyLine = DefaultConfig.defaultRequestExecutor();
       }
 
       if (defaultRequestOptions == null) {
@@ -226,8 +254,8 @@ public class Tricolor {
       return this;
     }
 
-    public Builder requestExecutor(RequestExecutor val) {
-      requestExecutor = val;
+    public Builder requestExecutor(RequestAssemblyLine val) {
+      requestAssemblyLine = val;
       return this;
     }
 

@@ -1,6 +1,6 @@
-package com.ldx.tricolor.disk;
+package com.ldx.tricolor.worker.fetcher;
 
-import com.ldx.tricolor.core.Intermediates;
+import com.ldx.tricolor.assemblyline.Intermediates;
 
 /**
  * EMAIL : danxionglei@foxmail.com
@@ -8,11 +8,10 @@ import com.ldx.tricolor.core.Intermediates;
  *
  * @author ldx
  */
-public class BaseDiskCacheFunc implements DiskCacheFunc{
+public class BaseImageFetcher implements ImageFetcher {
 
   @Override
   public Intermediates call(Intermediates intermediates) {
     return null;
   }
-
 }

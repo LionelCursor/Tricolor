@@ -1,11 +1,11 @@
-package com.ldx.tricolor.core;
+package com.ldx.tricolor.api;
 
 import android.net.Uri;
 import android.widget.ImageView;
 
-import com.ldx.tricolor.core.Request.RequestOptions;
-import com.ldx.tricolor.display.ImageTarget;
-import com.ldx.tricolor.display.SimpleImageTarget;
+import com.ldx.tricolor.api.Request.RequestOptions;
+import com.ldx.tricolor.worker.display.ImageTarget;
+import com.ldx.tricolor.worker.display.SimpleImageTarget;
 import com.ldx.tricolor.utils.Utils;
 
 /**
@@ -34,7 +34,7 @@ public class RequestCreator {
   private void checkOptions() {
     if (options == null) {
       // Copy the default options in tricolor global variable
-      options = new RequestOptions(tricolor.defaultRequestOptions);
+      options = new RequestOptions(tricolor.getDefaultRequestOptions());
     }
   }
 

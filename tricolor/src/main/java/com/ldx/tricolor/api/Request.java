@@ -1,8 +1,8 @@
-package com.ldx.tricolor.core;
+package com.ldx.tricolor.api;
 
 import android.net.Uri;
 
-import com.ldx.tricolor.display.ImageTarget;
+import com.ldx.tricolor.worker.display.ImageTarget;
 
 /**
  * EMAIL : danxionglei@foxmail.com
@@ -41,20 +41,20 @@ public class Request {
 
   public static class RequestOptions {
     // Demands of load
-    int width;
-    int height;
+    public int width;
+    public int height;
 
     // Demands of display
-    boolean setError;
-    int errorResId;
-    boolean setPlaceholder;
-    int placeholderResId;
-    boolean fadeIn;
-    int fadeInMillis;
+    public boolean setError;
+    public int errorResId;
+    public boolean setPlaceholder;
+    public int placeholderResId;
+    public boolean fadeIn;
+    public int fadeInMillis;
 
     // Demands of cache
-    boolean cacheInMemory;
-    boolean cacheInDisk;
+    public boolean cacheInMemory;
+    public boolean cacheInDisk;
 
     public RequestOptions() {
     }

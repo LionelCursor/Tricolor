@@ -1,8 +1,12 @@
-package com.ldx.tricolor.core;
+package com.ldx.tricolor.assemblyline;
+
+import com.ldx.tricolor.api.Request;
+import com.ldx.tricolor.api.Tricolor;
 
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action1;
+import rx.functions.Func1;
 
 /**
  * The core of all over the library.
@@ -13,46 +17,53 @@ import rx.functions.Action1;
  *
  * @author ldx
  */
-public class RxRequestExecutor implements RequestExecutor {
+public class RxRequestAssemblyLine implements RequestAssemblyLine {
 
   private Observable<Intermediates> observable = null;
 
-  // All the global variable
-  private final Tricolor tricolor;
+  // All the global worker contains in Tricolor instance
+  private Tricolor tricolor = null;
 
-  public RxRequestExecutor(Tricolor tricolor) {
+  public RxRequestAssemblyLine() {
+  }
+
+  @Override
+  public void with(Tricolor tricolor) {
     if (tricolor == null) {
-      throw new IllegalArgumentException("Tricolor can not be null");
+      throw new IllegalArgumentException("Tricolor passed in can not be null");
+    }
+    if (this.tricolor != null) {
+      throw new IllegalStateException("Tricolor can not be passed in twice.");
     }
     this.tricolor = tricolor;
   }
 
-  public RxRequestExecutor start(Request request) {
+  public RxRequestAssemblyLine start(Request request) {
     observable = Observable.just(new Intermediates(request, tricolor));
     return this;
   }
 
   // Key generated
-  public RxRequestExecutor generateKey() {
-    observable = observable.map(tricolor.keyGenerator);
+  public RxRequestAssemblyLine generateKey() {
+    observable = observable.map(tricolor.getKeyGenerator());
     return this;
   }
 
   // Get bitmap from memory
-  public RxRequestExecutor memoryCache() {
-    observable = observable.map(tricolor.memoryCacheFunc);
+  public RxRequestAssemblyLine memoryCache() {
+    observable = observable.map(tricolor.getMemoryCacheFunc());
     return this;
   }
 
   // If there is not bitmap gotten from memory, then open InputStream from disk.
-  public RxRequestExecutor diskCache() {
-    observable = observable.map(tricolor.diskCacheFunc);
+  public RxRequestAssemblyLine diskCache() {
+    observable = observable.map(tricolor.getDiskCacheFunc());
     return this;
   }
 
   // If there is no bitmap gotten from memory and disk, then got from network
-  public RxRequestExecutor fetch() {
-    observable = observable.map(tricolor.fetcher);
+  public RxRequestAssemblyLine fetch() {
+    observable = observable.map(tricolor.getFetcher());
     return this;
   }
 
@@ -60,14 +71,14 @@ public class RxRequestExecutor implements RequestExecutor {
   // then decode the InputStream. Note the demands in options.
   // Put new bitmap decoded in memory cache right now.
   // And check whether we need to put the bitmap stored in disk. If so, put it.
-  public RxRequestExecutor decode() {
-    observable = observable.map(tricolor.imageDecoder);
+  public RxRequestAssemblyLine decode() {
+    observable = observable.map(tricolor.getImageDecoder());
     return this;
   }
 
   // No matter decoded or get from memory, process the bitmap.
-  public RxRequestExecutor process() {
-    observable = observable.map(tricolor.imageProcessor);
+  public RxRequestAssemblyLine process() {
+    observable = observable.map(tricolor.getImageProcessor());
     return this;
   }
 
@@ -99,5 +110,25 @@ public class RxRequestExecutor implements RequestExecutor {
         .decode()
         .process()
         .subscribe();
+  }
+
+  public interface KeyGenerator extends Func1<Intermediates, Intermediates> {
+  }
+
+  public static class BaseKeyGenerator implements KeyGenerator {
+
+    @Override
+    public Intermediates call(Intermediates intermediates) {
+      if (intermediates == null) {
+        throw new IllegalStateException("Intermediates can not be null.");
+      }
+      Request request = intermediates.getRawRequest();
+      if (request == null) {
+        throw new IllegalStateException("Request of intermediates can not be null.");
+      }
+
+      intermediates.setKey(request.uri + "-" + request.options.width + "x" + request.options.height);
+      return intermediates;
+    }
   }
 }

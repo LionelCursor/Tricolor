@@ -1,6 +1,6 @@
-package com.ldx.tricolor.display;
+package com.ldx.tricolor.worker.display;
 
-import com.ldx.tricolor.core.Intermediates;
+import com.ldx.tricolor.assemblyline.Intermediates;
 
 import rx.functions.Action1;
 
@@ -13,5 +13,5 @@ import rx.functions.Action1;
 public interface ImageTarget extends Action1<Intermediates> {
 
   @Override
-  void call(Intermediates intermediates);
+  public void call(Intermediates intermediates);
 }

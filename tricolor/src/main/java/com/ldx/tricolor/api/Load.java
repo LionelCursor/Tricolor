@@ -1,4 +1,4 @@
-package com.ldx.tricolor.annotation;
+package com.ldx.tricolor.api;
 
 /**
  * EMAIL : danxionglei@foxmail.com
@@ -7,5 +7,6 @@ package com.ldx.tricolor.annotation;
  * @author ldx
  */
 public class Load {
+  // Will be used for annotation
 
 }

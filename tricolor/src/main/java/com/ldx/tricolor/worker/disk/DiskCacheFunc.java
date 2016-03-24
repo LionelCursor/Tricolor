@@ -1,6 +1,6 @@
-package com.ldx.tricolor.disk;
+package com.ldx.tricolor.worker.disk;
 
-import com.ldx.tricolor.core.Intermediates;
+import com.ldx.tricolor.assemblyline.Intermediates;
 
 import rx.functions.Func1;
 

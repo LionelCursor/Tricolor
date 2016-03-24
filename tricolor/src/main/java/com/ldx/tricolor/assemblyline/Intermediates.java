@@ -1,6 +1,9 @@
-package com.ldx.tricolor.core;
+package com.ldx.tricolor.assemblyline;
 
 import android.graphics.Bitmap;
+
+import com.ldx.tricolor.api.Request;
+import com.ldx.tricolor.api.Tricolor;
 
 import java.io.InputStream;
 
@@ -15,27 +18,27 @@ import java.io.InputStream;
 public class Intermediates {
 
   // The context of the image loading.
-  Tricolor tricolor;
+  private Tricolor tricolor;
 
   // The most important intermediate and also the result.
-  Bitmap bitmap; // DECODED
+  private Bitmap bitmap; // DECODED
 
   // The Intermediates from disk or network.
-  InputStream stream; // UN_DECODED
+  private InputStream stream; // UN_DECODED
 
   // Generated key from request, used to cache the bitmap in disk and memory.
-  String key; // KEY_GENERATED
+  private String key; // KEY_GENERATED
 
   // Records the original request and also the demands of it.
   // In details, Request contains the uri which means where it from , the imageTarget which means where it go
   // and the demands that demands of processing between previous two.
-  Request raw; // RAW
+  private Request raw; // RAW
 
   // The state defines which step this request has been, it was only a raw or already been a bitmap.
-  State state = State.RAW;
+  private State state = State.RAW;
 
   // The origin of bitmap or InputStream, which will control the behavior of Func below.
-  Origin origin = null;
+  private Origin origin = null;
 
   public enum Origin {
     MEMORY,
@@ -52,7 +55,7 @@ public class Intermediates {
 
   public Intermediates(Request request, Tricolor tricolor) {
     if (request == null || tricolor == null) {
-      throw new IllegalArgumentException("");
+      throw new IllegalArgumentException("Request or tricolor can not be null.");
     }
     this.raw = request;
     this.state = State.RAW;

@@ -1,8 +1,8 @@
-package com.ldx.tricolor.memory;
+package com.ldx.tricolor.worker.memory;
 
 import android.graphics.Bitmap;
 
-import com.ldx.tricolor.core.Intermediates;
+import com.ldx.tricolor.assemblyline.Intermediates;
 
 import java.util.Collection;
 

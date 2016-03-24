@@ -1,6 +1,6 @@
-package com.ldx.tricolor.fetcher;
+package com.ldx.tricolor.worker.processor;
 
-import com.ldx.tricolor.core.Intermediates;
+import com.ldx.tricolor.assemblyline.Intermediates;
 
 import rx.functions.Func1;
 
@@ -10,7 +10,7 @@ import rx.functions.Func1;
  *
  * @author ldx
  */
-public interface ImageFetcher extends Func1<Intermediates, Intermediates>{
+public interface ImageProcessor extends Func1<Intermediates, Intermediates> {
   @Override
   Intermediates call(Intermediates intermediates);
 }

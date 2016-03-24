@@ -1,13 +1,17 @@
-package com.ldx.tricolor.core;
+package com.ldx.tricolor.api;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
 
-import com.ldx.tricolor.core.Request.RequestOptions;
-import com.ldx.tricolor.disk.BaseDiskCacheFunc;
-import com.ldx.tricolor.disk.DiskCacheFunc;
-import com.ldx.tricolor.memory.BaseMemoryCacheFunc;
-import com.ldx.tricolor.memory.MemoryCacheFunc;
+import com.ldx.tricolor.api.Request.RequestOptions;
+import com.ldx.tricolor.assemblyline.RequestAssemblyLine;
+import com.ldx.tricolor.assemblyline.RxRequestAssemblyLine;
+import com.ldx.tricolor.assemblyline.RxRequestAssemblyLine.BaseKeyGenerator;
+import com.ldx.tricolor.assemblyline.RxRequestAssemblyLine.KeyGenerator;
+import com.ldx.tricolor.worker.disk.BaseDiskCacheFunc;
+import com.ldx.tricolor.worker.disk.DiskCacheFunc;
+import com.ldx.tricolor.worker.memory.BaseMemoryCacheFunc;
+import com.ldx.tricolor.worker.memory.MemoryCacheFunc;
 
 /**
  * EMAIL : danxionglei@foxmail.com
@@ -17,8 +21,8 @@ import com.ldx.tricolor.memory.MemoryCacheFunc;
  */
 public class DefaultConfig {
 
-  public static RequestExecutor defaultRequestExecutor() {
-    return new RxRequestExecutor();
+  public static RequestAssemblyLine defaultRequestExecutor() {
+    return new RxRequestAssemblyLine();
   }
 
   public static RequestOptions defaultRequestOptions(Context context) {
@@ -42,8 +46,8 @@ public class DefaultConfig {
     return new BaseDiskCacheFunc();
   }
 
-  public static Tricolor.KeyGenerator defaultKeyGenerator() {
-    return new Tricolor.BaseKeyGenerator();
+  public static KeyGenerator defaultKeyGenerator() {
+    return new BaseKeyGenerator();
   }
 
 }
