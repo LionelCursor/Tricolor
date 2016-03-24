@@ -7,11 +7,11 @@ import android.util.Log;
 import com.ldx.tricolor.core.Request.RequestOptions;
 import com.ldx.tricolor.decoder.ImageDecoder;
 import com.ldx.tricolor.disk.DiskCacheFunc;
+import com.ldx.tricolor.fetcher.ImageFetcher;
 import com.ldx.tricolor.memory.MemoryCacheFunc;
 import com.ldx.tricolor.processor.ImageProcessor;
 
 import java.io.File;
-import java.util.concurrent.Executor;
 
 import rx.functions.Func1;
 
@@ -39,16 +39,16 @@ public class Tricolor {
 
   ImageProcessor imageProcessor;
 
-  Executor fetchThreadPool;
+  ImageFetcher fetcher;
 
   boolean isLoggingEnabled;
 
   RequestOptions defaultRequestOptions;
 
-  KeyGenerator keyGenerator = new KeyGenerator();
+  KeyGenerator keyGenerator;
 
   // Private variable of this tricolor
-  private RequestExecutor executor = null;
+  private RequestExecutor requestExecutor;
 
   // Lazy loading singleton instance.
   private static volatile Tricolor singleton = null;
@@ -59,11 +59,11 @@ public class Tricolor {
     diskCacheFunc = builder.diskCacheFunc;
     imageDecoder = builder.imageDecoder;
     imageProcessor = builder.imageProcessor;
-    fetchThreadPool = builder.fetchThreadPool;
+    fetcher = builder.fetcher;
     isLoggingEnabled = builder.isLoggingEnabled;
     defaultRequestOptions = builder.defaultRequestOptions;
     keyGenerator = builder.keyGenerator;
-    executor = builder.executor;
+    requestExecutor = builder.requestExecutor;
   }
 
   // Get the singleton
@@ -90,7 +90,6 @@ public class Tricolor {
 
 
   /**
-   * TODO - not impl
    * create a request creator and then bring your demands to it.
    *
    * @param uri Uri of the image to load
@@ -107,7 +106,8 @@ public class Tricolor {
     if (isLoggingEnabled) {
       Log.e(TAG, "Dispatched request " + request);
     }
-
+    // Dispatch this request. Let it be executed.
+    requestExecutor.execute(request);
   }
 
   public void pause() {
@@ -118,12 +118,22 @@ public class Tricolor {
     // TODO not impl
   }
 
-  private static class KeyGenerator implements Func1<Request, Intermediates> {
+  public interface KeyGenerator extends Func1<Intermediates, Intermediates> {
+  }
+
+  public static class BaseKeyGenerator implements KeyGenerator {
 
     @Override
-    public Intermediates call(Request request) {
-
-      return null;
+    public Intermediates call(Intermediates intermediates) {
+      if (intermediates == null) {
+        throw new IllegalStateException("Intermediates can not be null.");
+      }
+      Request request = intermediates.getRawRequest();
+      if (request == null) {
+        throw new IllegalStateException("Request of intermediates can not be null.");
+      }
+      intermediates.key = request.uri + "-" + request.options.width + "x" + request.options.height;
+      return intermediates;
     }
   }
 
@@ -159,12 +169,11 @@ public class Tricolor {
     private boolean isLoggingEnabled = false;
     private RequestOptions defaultRequestOptions;
     private KeyGenerator keyGenerator;
-    private RequestExecutor executor;
     private RequestExecutor requestExecutor;
     private DiskCacheFunc diskCacheFunc;
     private ImageDecoder imageDecoder;
     private ImageProcessor imageProcessor;
-    private Executor fetchThreadPool;
+    private ImageFetcher fetcher;
     private MemoryCacheFunc memoryCacheFunc;
 
     public Builder(Context context) {
@@ -195,6 +204,10 @@ public class Tricolor {
         diskCacheFunc = DefaultConfig.defaultDiskCacheManager();
       }
 
+      if (keyGenerator == null) {
+        keyGenerator = DefaultConfig.defaultKeyGenerator();
+      }
+
       return new Tricolor(this);
     }
 
@@ -210,11 +223,6 @@ public class Tricolor {
 
     public Builder keyGenerator(KeyGenerator val) {
       keyGenerator = val;
-      return this;
-    }
-
-    public Builder executor(RequestExecutor val) {
-      executor = val;
       return this;
     }
 
@@ -248,13 +256,13 @@ public class Tricolor {
       return this;
     }
 
-    public Builder diskCacheManager(DiskCacheFunc val) {
-      diskCacheFunc = val;
+    public Builder fetcher(ImageFetcher val) {
+      fetcher = val;
       return this;
     }
 
-    public Builder fetchThreadPool(Executor val) {
-      fetchThreadPool = val;
+    public Builder diskCacheManager(DiskCacheFunc val) {
+      diskCacheFunc = val;
       return this;
     }
 

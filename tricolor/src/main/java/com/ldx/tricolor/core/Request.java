@@ -24,7 +24,20 @@ public class Request {
     options = creator.options;
   }
 
+  @Override
+  public String toString() {
+    return "[Uri = " + uri + "; RequestOptions = " + options.toString() + "]";
+  }
 
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return super.equals(o);
+  }
 
   public static class RequestOptions {
     // Demands of load
@@ -62,6 +75,15 @@ public class Request {
       cacheInMemory = options.cacheInMemory;
     }
 
-
+    @Override
+    public String toString() {
+      return "[cacheInMemory = " + cacheInMemory + "; " +
+          "cacheInDisk = " + cacheInDisk + "; " +
+          "width = " + width + "; " +
+          "height = " + height + "; " +
+          "setError = " + setError + "; " +
+          "setPlaceholder = " + setPlaceholder +
+          "]";
+    }
   }
 }

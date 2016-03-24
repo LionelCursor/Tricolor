@@ -9,9 +9,9 @@ package com.ldx.tricolor.core;
 public interface RequestExecutor {
 
   /**
-   * how
-   * @param request
+   * Execute the request.
+   * @param request all the detail message of a request of bitmap.
    */
-  public void execute(Request request, Tricolor tricolor);
+  public void execute(Request request);
 
 }

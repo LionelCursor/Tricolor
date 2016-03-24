@@ -14,11 +14,54 @@ import java.io.InputStream;
  */
 public class Intermediates {
 
+  // The context of the image loading.
+  Tricolor tricolor;
+
+  // The most important intermediate and also the result.
   Bitmap bitmap; // DECODED
 
+  // The Intermediates from disk or network.
   InputStream stream; // UN_DECODED
 
+  // Generated key from request, used to cache the bitmap in disk and memory.
   String key; // KEY_GENERATED
+
+  // Records the original request and also the demands of it.
+  // In details, Request contains the uri which means where it from , the imageTarget which means where it go
+  // and the demands that demands of processing between previous two.
+  Request raw; // RAW
+
+  // The state defines which step this request has been, it was only a raw or already been a bitmap.
+  State state = State.RAW;
+
+  // The origin of bitmap or InputStream, which will control the behavior of Func below.
+  Origin origin = null;
+
+  public enum Origin {
+    MEMORY,
+    DISK,
+    NETWORK,
+  }
+
+  public enum State {
+    RAW,
+    KEY_GENERATED,
+    UN_DECODED,
+    DECODED
+  }
+
+  public Intermediates(Request request, Tricolor tricolor) {
+    if (request == null || tricolor == null) {
+      throw new IllegalArgumentException("");
+    }
+    this.raw = request;
+    this.state = State.RAW;
+    this.tricolor = tricolor;
+  }
+
+  public Origin getOrigin() {
+    return origin;
+  }
 
   public Bitmap getBitmap() {
     return bitmap;
@@ -32,7 +75,7 @@ public class Intermediates {
     return key;
   }
 
-  public Request getRaw() {
+  public Request getRawRequest() {
     return raw;
   }
 
@@ -40,42 +83,44 @@ public class Intermediates {
     return state;
   }
 
-  // Records the original request and also the demands of it.
-  // In details, Request contains the uri which means where it from , the imageTarget which means where it go
-  // and the demands that demands of processing between previous two.
-  Request raw; // RAW
-
-  State state = State.RAW;
-
-  public Intermediates(Request request) {
-    this.raw = request;
-    this.state = State.RAW;
-  }
-
   public void setBitmap(Bitmap bitmap) {
+    if (bitmap == null) {
+      throw new IllegalArgumentException("Bitmap can not be null.");
+    }
     this.bitmap = bitmap;
     this.state = State.DECODED;
   }
 
+  public void setOrigin(Origin origin) {
+    if (origin == null) {
+      throw new IllegalArgumentException("Origin can not be null.");
+    }
+
+    this.origin = origin;
+  }
+
   public void setStream(InputStream stream) {
+    if (stream == null) {
+      throw new IllegalArgumentException("Stream can not be null.");
+    }
     this.stream = stream;
     this.state = State.UN_DECODED;
   }
 
   public void setKey(String key) {
+    if (key == null || key.isEmpty()) {
+      throw new IllegalArgumentException("Key can not be null or empty.");
+    }
     this.key = key;
     this.state = State.KEY_GENERATED;
   }
 
   public void setRawRequest(Request request) {
+    if (request == null) {
+      throw new IllegalArgumentException("Request can not be null.");
+    }
     this.raw = request;
     this.state = State.RAW;
   }
 
-  public enum State {
-    RAW,
-    KEY_GENERATED,
-    UN_DECODED,
-    DECODED
-  }
 }

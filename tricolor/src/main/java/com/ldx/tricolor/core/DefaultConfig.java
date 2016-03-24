@@ -42,4 +42,8 @@ public class DefaultConfig {
     return new BaseDiskCacheFunc();
   }
 
+  public static Tricolor.KeyGenerator defaultKeyGenerator() {
+    return new Tricolor.BaseKeyGenerator();
+  }
+
 }
