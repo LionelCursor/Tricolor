@@ -150,8 +150,7 @@ public class Tricolor {
   }
 
 
-
-    public Context getContext() {
+  public Context getContext() {
     return context;
   }
 
@@ -188,7 +187,6 @@ public class Tricolor {
   }
 
 
-
   /**
    * Builder for Tricolor
    */
@@ -202,6 +200,7 @@ public class Tricolor {
     private ImageDecoder imageDecoder;
     private ImageProcessor imageProcessor;
     private ImageFetcher fetcher;
+    private int maxSize;
     private MemoryCacheFunc memoryCacheFunc;
 
     public Builder(Context context) {
@@ -224,8 +223,12 @@ public class Tricolor {
         defaultRequestOptions = DefaultConfig.defaultRequestOptions(context);
       }
 
+      if (maxSize == 0) {
+        maxSize = 0;// 1 / 8 of main memory.
+      }
+
       if (memoryCacheFunc == null) {
-        memoryCacheFunc = DefaultConfig.defaultMemoryCacheFunc();
+        memoryCacheFunc = DefaultConfig.defaultMemoryCacheFunc(maxSize);
       }
 
       if (diskCacheFunc == null) {
@@ -237,6 +240,14 @@ public class Tricolor {
       }
 
       return new Tricolor(this);
+    }
+
+    public Builder maxSize(int maxSize) {
+      if (maxSize < 0) {
+        throw new IllegalStateException("maxSize of memory cache must not below zero.");
+      }
+      this.maxSize = maxSize;
+      return this;
     }
 
     public Builder isLoggingEnabled(boolean val) {

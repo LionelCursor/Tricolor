@@ -4,8 +4,8 @@ import android.net.Uri;
 import android.widget.ImageView;
 
 import com.ldx.tricolor.api.Request.RequestOptions;
-import com.ldx.tricolor.worker.display.ImageTarget;
-import com.ldx.tricolor.worker.display.SimpleImageTarget;
+import com.ldx.tricolor.worker.setup.ImageTarget;
+import com.ldx.tricolor.worker.setup.SimpleImageTarget;
 import com.ldx.tricolor.utils.Utils;
 
 /**

@@ -62,6 +62,10 @@ public class Intermediates {
     this.tricolor = tricolor;
   }
 
+  public Tricolor getTricolor() {
+    return tricolor;
+  }
+
   public Origin getOrigin() {
     return origin;
   }

@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 
 import com.ldx.tricolor.assemblyline.Intermediates;
 
-import java.util.Collection;
-
 import rx.functions.Func1;
 
 /**
@@ -16,17 +14,15 @@ import rx.functions.Func1;
  */
 public interface MemoryCacheFunc extends Func1<Intermediates, Intermediates> {
 
-  public Bitmap get();
+  public Bitmap get(String key);
 
-  public boolean put(String key, Bitmap bitmap);
+  public void put(String key, Bitmap bitmap);
 
-  public void evict(String key);
-
-  public Collection<String> keys();
+  public void remove(String key);
 
   // Whether the memory cache contains the bitmap.
   // If so, get it. Otherwise, transfer it immediately
   @Override
-  public Intermediates call(Intermediates rawRequest);
+  public Intermediates call(Intermediates intermediates);
 
 }

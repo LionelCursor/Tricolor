@@ -1,4 +1,4 @@
-package com.ldx.tricolor.worker.display;
+package com.ldx.tricolor.worker.setup;
 
 import com.ldx.tricolor.assemblyline.Intermediates;
 

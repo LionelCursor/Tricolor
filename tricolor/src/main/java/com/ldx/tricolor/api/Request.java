@@ -2,7 +2,7 @@ package com.ldx.tricolor.api;
 
 import android.net.Uri;
 
-import com.ldx.tricolor.worker.display.ImageTarget;
+import com.ldx.tricolor.worker.setup.ImageTarget;
 
 /**
  * EMAIL : danxionglei@foxmail.com

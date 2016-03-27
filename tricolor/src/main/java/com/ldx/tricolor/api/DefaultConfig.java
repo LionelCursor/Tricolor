@@ -11,6 +11,7 @@ import com.ldx.tricolor.assemblyline.RxRequestAssemblyLine.KeyGenerator;
 import com.ldx.tricolor.worker.disk.BaseDiskCacheFunc;
 import com.ldx.tricolor.worker.disk.DiskCacheFunc;
 import com.ldx.tricolor.worker.memory.BaseMemoryCacheFunc;
+import com.ldx.tricolor.worker.memory.LruMemoryCache;
 import com.ldx.tricolor.worker.memory.MemoryCacheFunc;
 
 /**
@@ -38,8 +39,8 @@ public class DefaultConfig {
     return options;
   }
 
-  public static MemoryCacheFunc defaultMemoryCacheFunc() {
-    return new BaseMemoryCacheFunc();
+  public static MemoryCacheFunc defaultMemoryCacheFunc(int maxSize) {
+    return new LruMemoryCache(maxSize);
   }
 
   public static DiskCacheFunc defaultDiskCacheManager() {

@@ -51,6 +51,9 @@ public class RxRequestAssemblyLine implements RequestAssemblyLine {
 
   // Get bitmap from memory
   public RxRequestAssemblyLine memoryCache() {
+    if (tricolor.getMemoryCacheFunc() == null) {
+      return this;
+    }
     observable = observable.map(tricolor.getMemoryCacheFunc());
     return this;
   }

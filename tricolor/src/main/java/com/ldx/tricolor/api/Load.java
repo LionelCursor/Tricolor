@@ -7,6 +7,6 @@ package com.ldx.tricolor.api;
  * @author ldx
  */
 public class Load {
-  // Will be used for annotation
+  // Will be used as annotation
 
 }
