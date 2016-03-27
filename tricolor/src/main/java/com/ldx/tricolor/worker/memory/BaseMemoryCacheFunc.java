@@ -3,6 +3,7 @@ package com.ldx.tricolor.worker.memory;
 import android.graphics.Bitmap;
 
 import com.ldx.tricolor.assemblyline.Intermediates;
+import com.ldx.tricolor.utils.Logger;
 
 /**
  * EMAIL : danxionglei@foxmail.com
@@ -35,18 +36,18 @@ public abstract class BaseMemoryCacheFunc implements MemoryCacheFunc {
       throw new IllegalStateException("Key of request can not be null or empty.");
     }
 
-    if (intermediates.getTricolor().isLoggingEnabled()) {
-
-    }
+    Logger.v("Intermediates processed by memory cache.");
 
     Bitmap cached = get(intermediates.getKey());
 
     if (cached == null) {
-
+      Logger.v("Memory cache miss.");
       return intermediates;
     }
 
-    return null;
+    Logger.v("Memory cache hits");
+    intermediates.setBitmap(cached);
+    return intermediates;
   }
 
 }
