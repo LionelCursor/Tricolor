@@ -200,6 +200,7 @@ public class Tricolor {
     private ImageProcessor imageProcessor;
     private ImageFetcher fetcher;
 
+    private boolean memoryCacheEnable = true;
     private int maxSize;
     private MemoryCacheFunc memoryCacheFunc;
 
@@ -232,12 +233,14 @@ public class Tricolor {
         defaultRequestOptions = DefaultConfig.defaultRequestOptions(context);
       }
 
-      if (maxSize == 0) {
-        maxSize = 0;// 1 / 8 of main memory.
-      }
+      if (memoryCacheEnable) {
+        if (maxSize == 0) {
+          maxSize = 0;// 1 / 8 of main memory.
+        }
 
-      if (memoryCacheFunc == null) {
-        memoryCacheFunc = DefaultConfig.defaultMemoryCacheFunc(maxSize);
+        if (memoryCacheFunc == null) {
+          memoryCacheFunc = DefaultConfig.defaultMemoryCacheFunc(maxSize);
+        }
       }
 
       if (diskCacheEnable) {
@@ -293,6 +296,9 @@ public class Tricolor {
     }
 
     public Builder memoryCacheFunc(MemoryCacheFunc val) {
+      if (!memoryCacheEnable) {
+        throw new IllegalStateException("Memory cache is disabled.");
+      }
       memoryCacheFunc = val;
       return this;
     }
@@ -319,7 +325,7 @@ public class Tricolor {
 
     public Builder diskCacheManager(DiskCacheFunc val) {
       if (!diskCacheEnable) {
-        throw new IllegalStateException("")
+        throw new IllegalStateException("Disk cache is disabled.");
       }
       diskCacheFunc = val;
       return this;
