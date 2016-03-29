@@ -12,7 +12,7 @@ import com.ldx.tricolor.api.Tricolor;
 public interface RequestAssemblyLine {
 
   /**
-   * Setup tricolor in assembly line, which contains all the workers in the assembly line.
+   * Setup tricolor in assembly line, which contains all the workers of the assembly line.
    * @param tricolor global worker container
    */
   public void with(Tricolor tricolor);

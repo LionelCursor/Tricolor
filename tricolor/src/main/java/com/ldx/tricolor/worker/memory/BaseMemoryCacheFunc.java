@@ -36,7 +36,7 @@ public abstract class BaseMemoryCacheFunc implements MemoryCacheFunc {
       throw new IllegalStateException("Key of request can not be null or empty.");
     }
 
-    Logger.v("Intermediates processed by memory cache.");
+    Logger.v("Memory cache starts to process the intermediates.");
 
     Bitmap cached = get(intermediates.getKey());
 
@@ -46,6 +46,7 @@ public abstract class BaseMemoryCacheFunc implements MemoryCacheFunc {
     }
 
     Logger.v("Memory cache hits");
+    intermediates.setOrigin(Intermediates.Origin.MEMORY);
     intermediates.setBitmap(cached);
     return intermediates;
   }

@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.ldx.tricolor.api.Request.RequestOptions;
 import com.ldx.tricolor.assemblyline.RequestAssemblyLine;
-import com.ldx.tricolor.assemblyline.RxRequestAssemblyLine.KeyGenerator;
+import com.ldx.tricolor.worker.KeyGenerator;
 import com.ldx.tricolor.worker.decoder.ImageDecoder;
 import com.ldx.tricolor.worker.disk.DiskCacheFunc;
 import com.ldx.tricolor.worker.fetcher.ImageFetcher;
@@ -196,12 +196,17 @@ public class Tricolor {
     private RequestOptions defaultRequestOptions;
     private KeyGenerator keyGenerator;
     private RequestAssemblyLine requestAssemblyLine;
-    private DiskCacheFunc diskCacheFunc;
     private ImageDecoder imageDecoder;
     private ImageProcessor imageProcessor;
     private ImageFetcher fetcher;
+
     private int maxSize;
     private MemoryCacheFunc memoryCacheFunc;
+
+    private boolean diskCacheEnable = true;
+    private File diskCacheDir;
+    private DiskCacheFunc diskCacheFunc;
+
 
     public Builder(Context context) {
       if (context == null) {
@@ -214,6 +219,10 @@ public class Tricolor {
     }
 
     public Tricolor build() {
+
+      if (context == null) {
+        throw new IllegalArgumentException("Context can not be null.");
+      }
 
       if (requestAssemblyLine == null) {
         requestAssemblyLine = DefaultConfig.defaultRequestExecutor();
@@ -231,8 +240,16 @@ public class Tricolor {
         memoryCacheFunc = DefaultConfig.defaultMemoryCacheFunc(maxSize);
       }
 
-      if (diskCacheFunc == null) {
-        diskCacheFunc = DefaultConfig.defaultDiskCacheManager();
+      if (diskCacheEnable) {
+
+        if (diskCacheDir == null) {
+          diskCacheDir = context.getCacheDir();
+        }
+
+        if (diskCacheFunc == null) {
+          diskCacheFunc = DefaultConfig.defaultDiskCacheManager(diskCacheDir);
+        }
+
       }
 
       if (keyGenerator == null) {
@@ -265,7 +282,7 @@ public class Tricolor {
       return this;
     }
 
-    public Builder requestExecutor(RequestAssemblyLine val) {
+    public Builder requestAssemblyLine(RequestAssemblyLine val) {
       requestAssemblyLine = val;
       return this;
     }
@@ -301,6 +318,9 @@ public class Tricolor {
     }
 
     public Builder diskCacheManager(DiskCacheFunc val) {
+      if (!diskCacheEnable) {
+        throw new IllegalStateException("")
+      }
       diskCacheFunc = val;
       return this;
     }

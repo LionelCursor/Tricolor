@@ -2,6 +2,8 @@ package com.ldx.tricolor.assemblyline;
 
 import com.ldx.tricolor.api.Request;
 import com.ldx.tricolor.api.Tricolor;
+import com.ldx.tricolor.utils.Logger;
+import com.ldx.tricolor.worker.KeyGenerator;
 
 import rx.Observable;
 import rx.Subscription;
@@ -60,6 +62,9 @@ public class RxRequestAssemblyLine implements RequestAssemblyLine {
 
   // If there is not bitmap gotten from memory, then open InputStream from disk.
   public RxRequestAssemblyLine diskCache() {
+    if (tricolor.getDiskCacheFunc() == null) {
+      return this;
+    }
     observable = observable.map(tricolor.getDiskCacheFunc());
     return this;
   }
@@ -113,9 +118,6 @@ public class RxRequestAssemblyLine implements RequestAssemblyLine {
         .decode()
         .process()
         .subscribe();
-  }
-
-  public interface KeyGenerator extends Func1<Intermediates, Intermediates> {
   }
 
   public static class BaseKeyGenerator implements KeyGenerator {

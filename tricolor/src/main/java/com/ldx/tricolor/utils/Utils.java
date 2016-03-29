@@ -13,7 +13,6 @@ public class Utils {
       if (objects[i] == null) {
         throw new IllegalStateException(String.format("The No.%d object is null", i));
       }
-
     }
   }
 }
