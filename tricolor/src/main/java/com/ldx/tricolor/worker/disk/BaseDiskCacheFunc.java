@@ -1,7 +1,7 @@
 package com.ldx.tricolor.worker.disk;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
+import android.renderscript.ScriptGroup;
 
 import com.ldx.tricolor.assemblyline.Intermediates;
 import com.ldx.tricolor.utils.Logger;
@@ -25,8 +25,8 @@ public abstract class BaseDiskCacheFunc implements DiskCacheFunc {
       throw new IllegalArgumentException("Cache directory can not be null.");
     }
 
-    if (!cacheDir.exists() || !cacheDir.isDirectory() || !cacheDir.mkdirs()) {
-      throw new IllegalStateException("Cache directory mkdirs failed");
+    if ((!cacheDir.exists() || !cacheDir.isDirectory()) && !cacheDir.mkdirs()) {
+      throw new IllegalStateException("Cache directory mkdirs failed.");
     }
 
     this.cacheDir = cacheDir;

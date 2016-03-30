@@ -9,7 +9,7 @@ import com.ldx.tricolor.assemblyline.RxRequestAssemblyLine;
 import com.ldx.tricolor.assemblyline.RxRequestAssemblyLine.BaseKeyGenerator;
 import com.ldx.tricolor.worker.KeyGenerator;
 import com.ldx.tricolor.worker.disk.DiskCacheFunc;
-import com.ldx.tricolor.worker.disk.UnlimitDiskCacheFunc;
+import com.ldx.tricolor.worker.disk.UnlimitedDiskCacheFunc;
 import com.ldx.tricolor.worker.memory.LruMemoryCache;
 import com.ldx.tricolor.worker.memory.MemoryCacheFunc;
 
@@ -45,7 +45,7 @@ public class DefaultConfig {
   }
 
   public static DiskCacheFunc defaultDiskCacheManager(File cacheDir) {
-    return new UnlimitDiskCacheFunc(cacheDir);
+    return new UnlimitedDiskCacheFunc(cacheDir);
   }
 
   public static KeyGenerator defaultKeyGenerator() {

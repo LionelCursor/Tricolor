@@ -12,17 +12,28 @@ import java.io.OutputStream;
  */
 public class IOUtils {
 
+  public static void closeSilently(InputStream is) {
+    try {
+      is.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public static void closeSilently(OutputStream os) {
+    try {
+      os.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
   public static boolean copyStream(InputStream is, OutputStream os, int bufferSize) throws IOException {
     byte[] buffer = new byte[bufferSize];
-    try {
-      int len = is.read(buffer);
-      while (len != -1) {
-        os.write(buffer, 0, len);
-        len = is.read(buffer);
-      }
-    } finally {
-      is.close();
-      os.close();
+    int len = is.read(buffer);
+    while (len != -1) {
+      os.write(buffer, 0, len);
+      len = is.read(buffer);
     }
     return true;
   }
