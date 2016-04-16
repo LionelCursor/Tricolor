@@ -3,6 +3,7 @@ package com.ldx.tricolor.worker.fetcher;
 import android.net.Uri;
 
 import com.ldx.tricolor.api.Tricolor;
+import com.ldx.tricolor.assemblyline.DataContainer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +14,7 @@ import java.io.InputStream;
  *
  * @author ldx
  */
-public class OkHttpFetcher implements FetchHandler {
+public class OkHttpFetcher extends FetchHandler {
 
   @Override
   public boolean canHandle(Uri uri) {
@@ -21,7 +22,12 @@ public class OkHttpFetcher implements FetchHandler {
   }
 
   @Override
-  public InputStream handle(Uri uri, Tricolor tricolor) throws IOException {
+  public DataContainer handle(Uri uri, Tricolor tricolor) {
+    return null;
+  }
+
+  @Override
+  public InputStream open(Uri uri, Tricolor tricolor) throws IOException {
     return null;
   }
 }

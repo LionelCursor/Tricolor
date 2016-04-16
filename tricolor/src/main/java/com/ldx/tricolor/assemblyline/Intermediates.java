@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 
 import com.ldx.tricolor.api.Request;
 import com.ldx.tricolor.api.Tricolor;
-import com.ldx.tricolor.utils.MarkableInputStream;
 
 /**
  * The Intermediates of the Processing from
@@ -26,7 +25,7 @@ public class Intermediates {
   // I tried to code a reopenable inputStream, that means I need to wrap a fetcher in it... It's very
   // difficult to make it clear then. So I removed this design and will find a better way.
   // I don't want to use the MarkableInputStream(used in picasso), it will load all file in memory with byte[].
-  private MarkableInputStream inputStream; // UN_DECODED
+  private DataContainer dataContainer; // UN_DECODED
 
   // Generated key from request, used to cache the bitmap in disk and memory.
   private String key; // KEY_GENERATED
@@ -76,10 +75,6 @@ public class Intermediates {
     return bitmap;
   }
 
-  public MarkableInputStream getInputStream() {
-    return inputStream;
-  }
-
   public String getKey() {
     return key;
   }
@@ -108,11 +103,15 @@ public class Intermediates {
     this.origin = origin;
   }
 
-  public void setInputStream(MarkableInputStream inputStream) {
-    if (inputStream == null) {
+  public DataContainer getDataContainer() {
+    return dataContainer;
+  }
+
+  public void setDataContainer(DataContainer dataContainer) {
+    if (dataContainer == null) {
       throw new IllegalArgumentException("Stream can not be null.");
     }
-    this.inputStream = inputStream;
+    this.dataContainer = dataContainer;
     this.state = State.UN_DECODED;
   }
 

@@ -3,11 +3,10 @@ package com.ldx.tricolor.worker.fetcher;
 import android.net.Uri;
 
 import com.ldx.tricolor.api.Tricolor;
+import com.ldx.tricolor.assemblyline.DataContainer;
 import com.ldx.tricolor.assemblyline.Intermediates;
 import com.ldx.tricolor.utils.Logger;
-import com.ldx.tricolor.utils.MarkableInputStream;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.List;
  *
  * @author ldx
  */
-public abstract class ImageFetcherImpl implements ImageFetcher {
+public class ImageFetcherImpl implements ImageFetcher {
 
   public static final String HTTP = "http";
 
@@ -54,7 +53,7 @@ public abstract class ImageFetcherImpl implements ImageFetcher {
     }
   }
 
-  public InputStream fetch(Uri uri, Tricolor tricolor) {
+  public DataContainer fetch(Uri uri, Tricolor tricolor) {
     InputStream is = null;
     FetchHandler fetchHandler = null;
 
@@ -68,15 +67,8 @@ public abstract class ImageFetcherImpl implements ImageFetcher {
       throw new IllegalStateException("The Uri [" + uri.toString() + "] is not supported for " +
           "ImageFetcher.\n Maybe, you could extends FetchHandler and add it for ImageFetcher yourself.");
     }
-
-    try {
-      is = fetchHandler.handle(uri, tricolor);
-    } catch (IOException e) {
-      Logger.e(e);
-    }
-    return is;
+    return fetchHandler.handle(uri, tricolor);
   }
-
 
   @Override
   public Intermediates call(Intermediates intermediates) {
@@ -105,10 +97,10 @@ public abstract class ImageFetcherImpl implements ImageFetcher {
       return memory;
     }
 
-    InputStream stream = fetch(intermediates.getRawRequest().uri, intermediates.getTricolor());
+    DataContainer data = fetch(intermediates.getRawRequest().uri, intermediates.getTricolor());
 
-    Logger.v("InputStream got.");
-    intermediates.setInputStream(new MarkableInputStream(stream));
+    Logger.v("Data got.");
+    intermediates.setDataContainer(data);
     return intermediates;
   }
 

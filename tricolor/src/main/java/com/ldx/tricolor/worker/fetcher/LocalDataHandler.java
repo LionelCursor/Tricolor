@@ -14,7 +14,7 @@ import java.io.InputStream;
  *
  * @author ldx
  */
-public class LocalDataHandler implements FetchHandler {
+public class LocalDataHandler extends FetchHandler {
 
   public static final String ASSETS = "assets";
 
@@ -44,7 +44,7 @@ public class LocalDataHandler implements FetchHandler {
    * @throws IllegalStateException Raise when unsupported scheme passed in this handler.
    */
   @Override
-  public InputStream handle(Uri uri, Tricolor tricolor) throws IOException {
+  public InputStream open(Uri uri, Tricolor tricolor) throws IOException {
     InputStream is;
     switch (uri.getScheme()) {
       case FILE:
@@ -74,4 +74,5 @@ public class LocalDataHandler implements FetchHandler {
   public InputStream fetchFromFile(Uri uri, Tricolor tricolor) throws IOException {
     return new FileInputStream(uri.getPath());
   }
+
 }
