@@ -54,7 +54,6 @@ public class ImageFetcherImpl implements ImageFetcher {
   }
 
   public DataContainer fetch(Uri uri, Tricolor tricolor) {
-    InputStream is = null;
     FetchHandler fetchHandler = null;
 
     for (FetchHandler handler : fetchHandlers) {
