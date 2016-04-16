@@ -48,12 +48,14 @@ public class DiskCacheTest {
   public void putAndRemove() throws Exception {
     String key_for_test = "key-for-test";
     Assert.assertNull(func.get(key_for_test));
+
     func.put(key_for_test, new FileInputStream(new File(cacheDir, "mountains.jpg")));
     Assert.assertNotNull(func.get(key_for_test));
     Assert.assertEquals(
         new File(cacheDir, key_for_test).length(),
         new File(cacheDir, "mountains.jpg").length());
     func.remove(key_for_test);
+
     Assert.assertFalse(new File(cacheDir, key_for_test).exists());
   }
 

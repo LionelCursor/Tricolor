@@ -104,4 +104,9 @@ public class Logger {
     Log.e(logger.getTag(), logger.format(message, objects));
   }
 
+  public static void e(Throwable throwable) {
+    Logger logger = Logger.getInstance();
+    Log.e(logger.getTag(), Log.getStackTraceString(throwable));
+  }
+
 }

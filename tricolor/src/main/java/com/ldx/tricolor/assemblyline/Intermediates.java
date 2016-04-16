@@ -4,8 +4,7 @@ import android.graphics.Bitmap;
 
 import com.ldx.tricolor.api.Request;
 import com.ldx.tricolor.api.Tricolor;
-
-import java.io.InputStream;
+import com.ldx.tricolor.utils.MarkableInputStream;
 
 /**
  * The Intermediates of the Processing from
@@ -24,7 +23,10 @@ public class Intermediates {
   private Bitmap bitmap; // DECODED
 
   // The Intermediates from disk or network.
-  private InputStream stream; // UN_DECODED
+  // I tried to code a reopenable inputStream, that means I need to wrap a fetcher in it... It's very
+  // difficult to make it clear then. So I removed this design and will find a better way.
+  // I don't want to use the MarkableInputStream(used in picasso), it will load all file in memory with byte[].
+  private MarkableInputStream inputStream; // UN_DECODED
 
   // Generated key from request, used to cache the bitmap in disk and memory.
   private String key; // KEY_GENERATED
@@ -37,7 +39,7 @@ public class Intermediates {
   // The state defines which step this request has been, it was only a raw or already been a bitmap.
   private State state = State.RAW;
 
-  // The origin of bitmap or InputStream, which will control the behavior of Func below.
+  // The origin of bitmap or inputStream, which will control the behavior of Func below.
   private Origin origin = null;
 
   public enum Origin {
@@ -74,8 +76,8 @@ public class Intermediates {
     return bitmap;
   }
 
-  public InputStream getStream() {
-    return stream;
+  public MarkableInputStream getInputStream() {
+    return inputStream;
   }
 
   public String getKey() {
@@ -106,11 +108,11 @@ public class Intermediates {
     this.origin = origin;
   }
 
-  public void setStream(InputStream stream) {
-    if (stream == null) {
+  public void setInputStream(MarkableInputStream inputStream) {
+    if (inputStream == null) {
       throw new IllegalArgumentException("Stream can not be null.");
     }
-    this.stream = stream;
+    this.inputStream = inputStream;
     this.state = State.UN_DECODED;
   }
 

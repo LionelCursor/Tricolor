@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import com.ldx.tricolor.api.Tricolor;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -12,10 +13,15 @@ import java.io.InputStream;
  *
  * @author ldx
  */
-public class OkHttpFetcher extends BaseImageFetcher{
+public class OkHttpFetcher implements FetchHandler {
 
   @Override
-  public InputStream fetchFromNetwork(Uri uri, Tricolor tricolor) {
+  public boolean canHandle(Uri uri) {
+    return false;
+  }
+
+  @Override
+  public InputStream handle(Uri uri, Tricolor tricolor) throws IOException {
     return null;
   }
 }
