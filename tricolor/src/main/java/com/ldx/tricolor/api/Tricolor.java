@@ -53,13 +53,13 @@ public class Tricolor {
   // Lazy loading singleton instance.
   private static volatile Tricolor singleton = null;
 
-  private Tricolor(Builder builder) {
+  protected Tricolor(TricolorBuilder builder) {
     context = builder.context;
     memoryCacheFunc = builder.memoryCacheFunc;
     diskCacheFunc = builder.diskCacheFunc;
     imageDecoder = builder.imageDecoder;
     imageProcessor = builder.imageProcessor;
-    fetcher = builder.fetcher;
+    fetcher = builder.imageFetcher;
     isLoggingEnabled = builder.isLoggingEnabled;
     defaultRequestOptions = builder.defaultRequestOptions;
     keyGenerator = builder.keyGenerator;
@@ -75,7 +75,7 @@ public class Tricolor {
    * @throws IllegalStateException
    */
   public static void init(Context context) {
-    init(new Builder(context).build());
+    init(new TricolorBuilder(context).build());
   }
 
   /**
@@ -149,7 +149,6 @@ public class Tricolor {
     // TODO not impl
   }
 
-
   public Context getContext() {
     return context;
   }
@@ -187,153 +186,4 @@ public class Tricolor {
   }
 
 
-  /**
-   * Builder for Tricolor
-   */
-  public static final class Builder {
-    private Context context;
-    private boolean isLoggingEnabled = false;
-    private RequestOptions defaultRequestOptions;
-    private KeyGenerator keyGenerator;
-    private RequestAssemblyLine requestAssemblyLine;
-    private ImageDecoder imageDecoder;
-    private ImageProcessor imageProcessor;
-    private ImageFetcher fetcher;
-
-    private boolean memoryCacheEnable = true;
-    private int maxSize;
-    private MemoryCacheFunc memoryCacheFunc;
-
-    private boolean diskCacheEnable = true;
-    private File diskCacheDir;
-    private DiskCacheFunc diskCacheFunc;
-
-
-    public Builder(Context context) {
-      if (context == null) {
-        throw new IllegalArgumentException("Context can not be null.");
-      }
-      this.context = context.getApplicationContext();
-    }
-
-    public Builder() {
-    }
-
-    public Tricolor build() {
-
-      if (context == null) {
-        throw new IllegalArgumentException("Context can not be null.");
-      }
-
-      if (requestAssemblyLine == null) {
-        requestAssemblyLine = DefaultConfig.defaultRequestExecutor();
-      }
-
-      if (defaultRequestOptions == null) {
-        defaultRequestOptions = DefaultConfig.defaultRequestOptions(context);
-      }
-
-      if (memoryCacheEnable) {
-        if (maxSize == 0) {
-          maxSize = 0;// 1 / 8 of main memory.
-        }
-
-        if (memoryCacheFunc == null) {
-          memoryCacheFunc = DefaultConfig.defaultMemoryCacheFunc(maxSize);
-        }
-      }
-
-      if (diskCacheEnable) {
-
-        if (diskCacheDir == null) {
-          diskCacheDir = context.getCacheDir();
-        }
-
-        if (diskCacheFunc == null) {
-          diskCacheFunc = DefaultConfig.defaultDiskCacheManager(diskCacheDir);
-        }
-
-      }
-
-      if (keyGenerator == null) {
-        keyGenerator = DefaultConfig.defaultKeyGenerator();
-      }
-
-      return new Tricolor(this);
-    }
-
-    public Builder maxSize(int maxSize) {
-      if (maxSize < 0) {
-        throw new IllegalStateException("maxSize of memory cache must not below zero.");
-      }
-      this.maxSize = maxSize;
-      return this;
-    }
-
-    public Builder isLoggingEnabled(boolean val) {
-      isLoggingEnabled = val;
-      return this;
-    }
-
-    public Builder defaultRequestOptions(RequestOptions val) {
-      defaultRequestOptions = val;
-      return this;
-    }
-
-    public Builder keyGenerator(KeyGenerator val) {
-      keyGenerator = val;
-      return this;
-    }
-
-    public Builder requestAssemblyLine(RequestAssemblyLine val) {
-      requestAssemblyLine = val;
-      return this;
-    }
-
-    public Builder context(Context val) {
-      context = val;
-      return this;
-    }
-
-    public Builder memoryCacheFunc(MemoryCacheFunc val) {
-      if (!memoryCacheEnable) {
-        throw new IllegalStateException("Memory cache is disabled.");
-      }
-      memoryCacheFunc = val;
-      return this;
-    }
-
-    public Builder diskCacheFunc(DiskCacheFunc val) {
-      diskCacheFunc = val;
-      return this;
-    }
-
-    public Builder imageDecoder(ImageDecoder val) {
-      imageDecoder = val;
-      return this;
-    }
-
-    public Builder imageProcessor(ImageProcessor val) {
-      imageProcessor = val;
-      return this;
-    }
-
-    public Builder fetcher(ImageFetcher val) {
-      fetcher = val;
-      return this;
-    }
-
-    public Builder diskCacheManager(DiskCacheFunc val) {
-      if (!diskCacheEnable) {
-        throw new IllegalStateException("Disk cache is disabled.");
-      }
-      diskCacheFunc = val;
-      return this;
-    }
-
-    public Builder memoryCacheManager(MemoryCacheFunc val) {
-      memoryCacheFunc = val;
-      return this;
-    }
-  }
 }

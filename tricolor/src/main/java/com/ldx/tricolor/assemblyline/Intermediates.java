@@ -22,7 +22,7 @@ public class Intermediates {
   private Bitmap bitmap; // DECODED
 
   // The Intermediates from disk or network.
-  // I tried to code a reopenable inputStream, that means I need to wrap a fetcher in it... It's very
+  // I tried to code a reopenable inputStream, that means I need to wrap a imageFetcher in it... It's very
   // difficult to make it clear then. So I removed this design and will find a better way.
   // I don't want to use the MarkableInputStream(used in picasso), it will load all file in memory with byte[].
   private DataContainer dataContainer; // UN_DECODED
@@ -129,6 +129,22 @@ public class Intermediates {
     }
     this.raw = request;
     this.state = State.RAW;
+  }
+
+  public static void validIntermediates(Intermediates intermediates) {
+
+    if (intermediates == null) {
+      throw new IllegalArgumentException("Intermediates can not be null");
+    }
+
+    if (intermediates.getRawRequest() == null) {
+      throw new IllegalStateException("Request can not be null");
+    }
+
+    if (intermediates.getKey() == null || intermediates.getKey().isEmpty()) {
+      throw new IllegalStateException("Key of request can not be null or empty.");
+    }
+
   }
 
 }

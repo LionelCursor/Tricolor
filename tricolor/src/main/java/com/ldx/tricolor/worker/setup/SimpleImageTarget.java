@@ -3,6 +3,7 @@ package com.ldx.tricolor.worker.setup;
 import android.widget.ImageView;
 
 import com.ldx.tricolor.assemblyline.Intermediates;
+import com.ldx.tricolor.utils.Logger;
 
 import java.lang.ref.WeakReference;
 
@@ -27,5 +28,6 @@ public class SimpleImageTarget implements ImageTarget {
       return;
     }
     imageView.setImageBitmap(intermediates.getBitmap());
+    Logger.v("Tricolor has set bitmap to image target successfully.");
   }
 }

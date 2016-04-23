@@ -18,7 +18,7 @@ public abstract class FetchHandler {
   public abstract boolean canHandle(Uri uri);
 
   public DataContainer handle(Uri uri, Tricolor tricolor) {
-    return new DataContainerImpl(uri, tricolor, this);
+    return new LazyDataContainer(uri, tricolor, this);
   }
 
   public abstract InputStream open(Uri uri, Tricolor tricolor) throws IOException;

@@ -8,8 +8,12 @@ import com.ldx.tricolor.assemblyline.RequestAssemblyLine;
 import com.ldx.tricolor.assemblyline.RxRequestAssemblyLine;
 import com.ldx.tricolor.assemblyline.RxRequestAssemblyLine.BaseKeyGenerator;
 import com.ldx.tricolor.worker.KeyGenerator;
+import com.ldx.tricolor.worker.decoder.BaseImageDecoder;
+import com.ldx.tricolor.worker.decoder.ImageDecoder;
 import com.ldx.tricolor.worker.disk.DiskCacheFunc;
 import com.ldx.tricolor.worker.disk.UnlimitedDiskCacheFunc;
+import com.ldx.tricolor.worker.fetcher.ImageFetcher;
+import com.ldx.tricolor.worker.fetcher.ImageFetcherImpl;
 import com.ldx.tricolor.worker.memory.LruMemoryCache;
 import com.ldx.tricolor.worker.memory.MemoryCacheFunc;
 
@@ -50,6 +54,14 @@ public class DefaultConfig {
 
   public static KeyGenerator defaultKeyGenerator() {
     return new BaseKeyGenerator();
+  }
+
+  public static ImageDecoder defaultDecoder() {
+    return new BaseImageDecoder();
+  }
+
+  public static ImageFetcher defaultFetcher() {
+    return new ImageFetcherImpl();
   }
 
 }

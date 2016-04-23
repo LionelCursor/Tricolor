@@ -24,8 +24,10 @@ public class Logger {
   }
 
   private static final int MAX_LOG_LENGTH = 4000;
-  private static final int CALL_STACK_INDEX = 5;
+  private static final int CALL_STACK_INDEX = 3;
   private static final Pattern ANONYMOUS_CLASS = Pattern.compile("(\\$\\d+)+$");
+
+  private static boolean shouldLogWhere = true;
 
   private final ThreadLocal<String> explicitTag = new ThreadLocal<>();
 
@@ -61,16 +63,31 @@ public class Logger {
     return createStackElementTag(stackTrace[CALL_STACK_INDEX]);
   }
 
-  private String wrapTime(String message) {
+  private String detailLocation() {
+    StackTraceElement element = new Throwable().getStackTrace()[5];
+    return String.format("%s#%s():%d", element.getFileName(), element.getMethodName(), element.getLineNumber());
+  }
+
+  private String wrapWhen(String message) {
     Long startTime = threadTime.get();
     if (startTime == null) {
       return message;
     }
-    return String.format("%s\n(%d ms used)", message, System.currentTimeMillis() - startTime);
+    return String.format("%s@(%d ms used)", message, System.currentTimeMillis() - startTime);
   }
 
-  private String format(String message, Object... objects) {
-    return wrapTime(String.format(message, objects));
+  private String wrapWhere(String message) {
+    if (!shouldLogWhere) {
+      return message;
+    }
+    return message + "  @" + detailLocation();
+  }
+
+  private String wrap(String message, Object... objects) {
+    String result = String.format(message, objects);
+    result = wrapWhere(result);
+    result = wrapWhen(result);
+    return result;
   }
 
   public static void tag(String tag) {
@@ -91,17 +108,17 @@ public class Logger {
 
   public static void v(String message, Object... objects) {
     Logger logger = Logger.getInstance();
-    Log.v(logger.getTag(), logger.format(message, objects));
+    Log.v(logger.getTag(), logger.wrap(message, objects));
   }
 
   public static void d(String message, Object... objects) {
     Logger logger = Logger.getInstance();
-    Log.d(logger.getTag(), logger.format(message, objects));
+    Log.d(logger.getTag(), logger.wrap(message, objects));
   }
 
   public static void e(String message, Object... objects) {
     Logger logger = Logger.getInstance();
-    Log.e(logger.getTag(), logger.format(message, objects));
+    Log.e(logger.getTag(), logger.wrap(message, objects));
   }
 
   public static void e(Throwable throwable) {

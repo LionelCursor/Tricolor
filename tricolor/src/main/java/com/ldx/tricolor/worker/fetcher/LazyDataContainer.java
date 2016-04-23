@@ -15,7 +15,7 @@ import java.io.InputStream;
  *
  * @author ldx
  */
-public class DataContainerImpl implements DataContainer {
+public class LazyDataContainer implements DataContainer {
 
   private Uri uri;
 
@@ -23,7 +23,7 @@ public class DataContainerImpl implements DataContainer {
 
   private FetchHandler fetchHandler;
 
-  public DataContainerImpl(Uri uri, Tricolor tricolor, FetchHandler handler) {
+  public LazyDataContainer(Uri uri, Tricolor tricolor, FetchHandler handler) {
     this.uri = uri;
     this.tricolor = tricolor;
     this.fetchHandler = handler;

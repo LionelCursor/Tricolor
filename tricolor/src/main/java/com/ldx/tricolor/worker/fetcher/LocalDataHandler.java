@@ -39,7 +39,7 @@ public class LocalDataHandler extends FetchHandler {
    *
    * @param uri      The uri of request.
    * @param tricolor Context.
-   * @return The result of this fetcher.
+   * @return The result of this imageFetcher.
    * @throws IOException           Raise when file not found or something else occurred.
    * @throws IllegalStateException Raise when unsupported scheme passed in this handler.
    */

@@ -16,15 +16,4 @@ import java.io.File;
 public class DiskCacheTest extends InstrumentationTestCase {
 
 
-  UnlimitedDiskCacheFunc func = null;
-
-  File cacheDir = null;
-
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    cacheDir = getInstrumentation().getTargetContext().getCacheDir();
-    func = new UnlimitedDiskCacheFunc(cacheDir);
-  }
-
 }

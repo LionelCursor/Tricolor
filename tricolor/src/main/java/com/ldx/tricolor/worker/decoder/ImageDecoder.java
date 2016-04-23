@@ -2,6 +2,8 @@ package com.ldx.tricolor.worker.decoder;
 
 import com.ldx.tricolor.assemblyline.Intermediates;
 
+import java.io.IOException;
+
 import rx.functions.Func1;
 
 /**

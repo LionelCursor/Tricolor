@@ -6,8 +6,8 @@ import com.ldx.tricolor.api.Tricolor;
 import com.ldx.tricolor.assemblyline.DataContainer;
 import com.ldx.tricolor.assemblyline.Intermediates;
 import com.ldx.tricolor.utils.Logger;
+import com.ldx.tricolor.worker.memory.MemoryCacheFunc;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +18,6 @@ import java.util.List;
  * @author ldx
  */
 public class ImageFetcherImpl implements ImageFetcher {
-
-  public static final String HTTP = "http";
-
-  public static final String HTTPS = "https";
 
   private List<FetchHandler> fetchHandlers;
 
@@ -38,19 +34,13 @@ public class ImageFetcherImpl implements ImageFetcher {
 
   public ImageFetcherImpl(List<FetchHandler> fetchHandlers) {
     if (fetchHandlers == null) {
-      throw new IllegalArgumentException("Image fetcher can not work without any fetchHandler.");
+      throw new IllegalArgumentException("Image imageFetcher can not work without any fetchHandler.");
     }
     this.fetchHandlers = fetchHandlers;
   }
 
   public List<FetchHandler> getFetchHandlers() {
     return fetchHandlers;
-  }
-
-  private void checkNull(InputStream is, Uri uri) {
-    if (is == null) {
-      throw new IllegalStateException("InputStream fetched is null from " + uri.toString());
-    }
   }
 
   public DataContainer fetch(Uri uri, Tricolor tricolor) {
@@ -66,22 +56,14 @@ public class ImageFetcherImpl implements ImageFetcher {
       throw new IllegalStateException("The Uri [" + uri.toString() + "] is not supported for " +
           "ImageFetcher.\n Maybe, you could extends FetchHandler and add it for ImageFetcher yourself.");
     }
+
+    Logger.v("Uri is dispatched to FetchHandler [" + fetchHandler.getClass().getSimpleName() + "]");
     return fetchHandler.handle(uri, tricolor);
   }
 
   @Override
   public Intermediates call(Intermediates intermediates) {
-    if (intermediates == null) {
-      throw new IllegalArgumentException("Intermediates can not be null");
-    }
-
-    if (intermediates.getRawRequest() == null) {
-      throw new IllegalStateException("Request can not be null");
-    }
-
-    if (intermediates.getKey() == null || intermediates.getKey().isEmpty()) {
-      throw new IllegalStateException("Key of request can not be null or empty.");
-    }
+    Intermediates.validIntermediates(intermediates);
 
     Logger.v("Fetcher starts to process the intermediates.");
 

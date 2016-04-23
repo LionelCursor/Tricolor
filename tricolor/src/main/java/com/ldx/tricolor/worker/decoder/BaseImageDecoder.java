@@ -1,6 +1,16 @@
 package com.ldx.tricolor.worker.decoder;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.ldx.tricolor.api.Request;
+import com.ldx.tricolor.api.Tricolor;
+import com.ldx.tricolor.assemblyline.DataContainer;
 import com.ldx.tricolor.assemblyline.Intermediates;
+
+import java.io.InputStream;
+
+import static com.ldx.tricolor.assemblyline.Intermediates.validIntermediates;
 
 /**
  * EMAIL : danxionglei@foxmail.com
@@ -9,23 +19,60 @@ import com.ldx.tricolor.assemblyline.Intermediates;
  * @author ldx
  */
 public class BaseImageDecoder implements ImageDecoder {
+
+
+  public BaseImageDecoder() {
+  }
+
   @Override
   public Intermediates call(Intermediates intermediates) {
 
-    if (intermediates == null) {
-      throw new IllegalArgumentException("Intermediates can not be null");
+    validIntermediates(intermediates);
+
+    if (intermediates.getBitmap() != null) {
+      return intermediates;
     }
 
-    if (intermediates.getRawRequest() == null) {
-      throw new IllegalStateException("Request can not be null");
+    intermediates = intermediates.getTricolor().getMemoryCacheFunc().call(intermediates);
+
+    if (intermediates.getBitmap() != null) {
+      return intermediates;
     }
 
-    if (intermediates.getKey() == null || intermediates.getKey().isEmpty()) {
-      throw new IllegalStateException("Key of request can not be null or empty.");
+    DataContainer container = intermediates.getDataContainer();
+
+    if (intermediates.getDataContainer() == null) {
+      throw new IllegalStateException("The data container passed down from imageFetcher is null.");
     }
 
+    InputStream is = container.open();
 
+    // TODO: can be better. the source width and height could be cached.
+    BitmapFactory.Options options = new BitmapFactory.Options();
+    options.inJustDecodeBounds = true;
+    BitmapFactory.decodeStream(is, null, options);
 
-    return null;
+    is = container.open();
+
+    options.inJustDecodeBounds = false;
+    Request.RequestOptions requestOptions = intermediates.getRawRequest().options;
+    options.inSampleSize = getSampleSize(options.outWidth, options.outHeight, requestOptions.width, requestOptions.height);
+    Bitmap result = BitmapFactory.decodeStream(is, null, options);
+    if (result == null) {
+      throw new IllegalStateException("Bitmap can not be decoded.");
+    }
+
+    // I have not considered so many cases, especially when result == null, failed or something wrong.
+    intermediates.setBitmap(result);
+
+    intermediates.getTricolor().getMemoryCacheFunc().put(intermediates.getKey(), result);
+    // TODO impl the DiskCache, I don't design for this.
+    return intermediates;
   }
+
+  public int getSampleSize(int outWidth, int outHeight, int desireWidth, int desireHeight) {
+    //TODO impl sample size
+    return 1;
+  }
+
 }

@@ -1,4 +1,4 @@
-package com.ldx.tricolor;
+package com.ldx.tricolor.sample;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

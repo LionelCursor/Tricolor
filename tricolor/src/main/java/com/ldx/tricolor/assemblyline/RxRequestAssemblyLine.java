@@ -7,8 +7,9 @@ import com.ldx.tricolor.worker.KeyGenerator;
 
 import rx.Observable;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * The core of all over the library.
@@ -42,11 +43,15 @@ public class RxRequestAssemblyLine implements RequestAssemblyLine {
 
   public RxRequestAssemblyLine start(Request request) {
     observable = Observable.just(new Intermediates(request, tricolor));
+    observable = observable.subscribeOn(Schedulers.io());
     return this;
   }
 
   // Key generated
   public RxRequestAssemblyLine generateKey() {
+    if (tricolor.getKeyGenerator() == null) {
+      throw new IllegalStateException("Must have key generator.");
+    }
     observable = observable.map(tricolor.getKeyGenerator());
     return this;
   }
@@ -71,6 +76,9 @@ public class RxRequestAssemblyLine implements RequestAssemblyLine {
 
   // If there is no bitmap gotten from memory and disk, then got from network
   public RxRequestAssemblyLine fetch() {
+    if (tricolor.getFetcher() == null) {
+      throw new IllegalStateException("Fetcher can not be null.");
+    }
     observable = observable.map(tricolor.getFetcher());
     return this;
   }
@@ -80,32 +88,37 @@ public class RxRequestAssemblyLine implements RequestAssemblyLine {
   // Put new bitmap decoded in memory cache right now.
   // And check whether we need to put the bitmap stored in disk. If so, put it.
   public RxRequestAssemblyLine decode() {
+    if (tricolor.getImageDecoder() == null) {
+      throw new IllegalStateException("Decoder can not be null.");
+    }
     observable = observable.map(tricolor.getImageDecoder());
     return this;
   }
 
   // No matter decoded or get from memory, process the bitmap.
   public RxRequestAssemblyLine process() {
+    if (tricolor.getImageProcessor() == null) {
+      return this;
+    }
     observable = observable.map(tricolor.getImageProcessor());
     return this;
   }
 
   public Subscription subscribe() {
-    return observable.subscribe(new Action1<Intermediates>() {
-      @Override
-      public void call(Intermediates intermediates) {
-        if (intermediates == null) {
-          throw new IllegalArgumentException("Intermediates of subscribe can not be null.");
-        }
-        if (intermediates.getRawRequest() == null) {
-          throw new IllegalArgumentException("Request of intermediates in subscribe can not be null.");
-        }
-        if (intermediates.getRawRequest().imageTarget == null) {
-          throw new IllegalArgumentException("ImageTarget attached to request in subscribe can not be null");
-        }
-        intermediates.getRawRequest().imageTarget.call(intermediates);
-      }
-    });
+    observable = observable.observeOn(AndroidSchedulers.mainThread());
+    return observable.subscribe(
+        new Action1<Intermediates>() {
+          @Override
+          public void call(Intermediates intermediates) {
+            Intermediates.validIntermediates(intermediates);
+            intermediates.getRawRequest().imageTarget.call(intermediates);
+          }
+        }, new Action1<Throwable>() {
+          @Override
+          public void call(Throwable throwable) {
+            Logger.e(throwable);
+          }
+        });
   }
 
   @Override

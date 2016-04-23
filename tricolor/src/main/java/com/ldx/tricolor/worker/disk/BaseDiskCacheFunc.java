@@ -1,7 +1,6 @@
 package com.ldx.tricolor.worker.disk;
 
 import android.net.Uri;
-import android.renderscript.ScriptGroup;
 
 import com.ldx.tricolor.assemblyline.Intermediates;
 import com.ldx.tricolor.utils.Logger;
@@ -40,24 +39,16 @@ public abstract class BaseDiskCacheFunc implements DiskCacheFunc {
 
   @Override
   public Intermediates call(Intermediates intermediates) {
-    if (intermediates == null) {
-      throw new IllegalArgumentException("Intermediates can not be null");
-    }
-
-    if (intermediates.getRawRequest() == null) {
-      throw new IllegalStateException("Request can not be null");
-    }
-
-    if (intermediates.getKey() == null || intermediates.getKey().isEmpty()) {
-      throw new IllegalStateException("Key of request can not be null or empty.");
-    }
+    Intermediates.validIntermediates(intermediates);
 
     Logger.v("Disk cache starts to process intermediates.");
 
     if (intermediates.getBitmap() != null) {
-      Logger.v("Disk cache passed without a word, as bitmap hit.");
+      Logger.v("Disk cache passed without doing anything, as bitmap hit.");
       return intermediates;
     }
+
+    intermediates.getTricolor().getMemoryCacheFunc().call(intermediates);
 
     Uri uri = get(intermediates.getKey());
 
