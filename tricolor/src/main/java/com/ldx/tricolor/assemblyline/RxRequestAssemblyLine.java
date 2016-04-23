@@ -144,7 +144,7 @@ public class RxRequestAssemblyLine implements RequestAssemblyLine {
       if (request == null) {
         throw new IllegalStateException("Request of intermediates can not be null.");
       }
-
+      Logger.time();
       intermediates.setKey(request.uri + "-" + request.options.width + "x" + request.options.height);
       return intermediates;
     }
