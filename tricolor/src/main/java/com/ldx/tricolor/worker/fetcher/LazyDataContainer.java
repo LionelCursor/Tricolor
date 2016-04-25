@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import com.ldx.tricolor.api.Tricolor;
 import com.ldx.tricolor.assemblyline.DataContainer;
+import com.ldx.tricolor.utils.IOUtils;
 import com.ldx.tricolor.utils.Logger;
 
 import java.io.IOException;
@@ -23,6 +24,8 @@ public class LazyDataContainer implements DataContainer {
 
   private FetchHandler fetchHandler;
 
+  private InputStream is;
+
   public LazyDataContainer(Uri uri, Tricolor tricolor, FetchHandler handler) {
     this.uri = uri;
     this.tricolor = tricolor;
@@ -31,7 +34,6 @@ public class LazyDataContainer implements DataContainer {
 
   @Override
   public InputStream open() {
-    InputStream is = null;
     try {
       is = fetchHandler.open(uri, tricolor);
     } catch (IOException e) {
@@ -39,6 +41,11 @@ public class LazyDataContainer implements DataContainer {
           "\n Error : " + e);
     }
     return is;
+  }
+
+  @Override
+  public void finish() {
+    IOUtils.closeSilently(is);
   }
 
 }

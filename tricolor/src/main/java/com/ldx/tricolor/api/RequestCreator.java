@@ -32,9 +32,13 @@ public class RequestCreator {
   }
 
   private void checkOptions() {
-    if (options == null) {
+    if (this.options == null) {
       // Copy the default options in tricolor global variable
-      options = new RequestOptions(tricolor.getDefaultRequestOptions());
+      RequestOptions options = tricolor.getDefaultRequestOptions();
+      if (options == null) {
+        throw new IllegalArgumentException("Please set default request options in tricolor.");
+      }
+      this.options = new RequestOptions(options);
     }
   }
 
@@ -98,6 +102,18 @@ public class RequestCreator {
     checkOptions();
     options.setError = true;
     options.errorResId = resId;
+    return this;
+  }
+
+  public RequestCreator centerInside(boolean centerInside) {
+    checkOptions();
+    options.centerInside = centerInside;
+    return this;
+  }
+
+  public RequestCreator centerCrop(boolean centerCrop) {
+    checkOptions();
+    options.centerCrop = centerCrop;
     return this;
   }
 

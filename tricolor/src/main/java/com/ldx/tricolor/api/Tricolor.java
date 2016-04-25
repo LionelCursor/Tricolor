@@ -75,7 +75,10 @@ public class Tricolor {
    * @throws IllegalStateException
    */
   public static void init(Context context) {
-    init(new TricolorBuilder(context).build());
+    if (context == null) {
+      throw new IllegalStateException("Context must not be null.");
+    }
+    init(new TricolorBuilder(context.getApplicationContext()).build());
   }
 
   /**

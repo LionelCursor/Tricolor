@@ -36,6 +36,8 @@ public class DefaultConfig {
     DisplayMetrics metrics = context.getResources().getDisplayMetrics();
     options.width = metrics.widthPixels;
     options.height = metrics.heightPixels;
+    options.centerCrop = true;
+    options.centerInside = false;
     options.cacheInDisk = true;
     options.cacheInMemory = true;
     options.setError = false;

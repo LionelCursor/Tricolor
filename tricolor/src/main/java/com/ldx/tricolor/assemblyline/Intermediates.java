@@ -147,4 +147,13 @@ public class Intermediates {
 
   }
 
+  public static boolean checkCompleted(Intermediates intermediates) {
+    return intermediates.getBitmap() != null;
+  }
+
+  public static boolean checkMemory(Intermediates intermediates) {
+    intermediates = intermediates.getTricolor().getMemoryCacheFunc().call(intermediates);
+    return checkCompleted(intermediates);
+  }
+
 }

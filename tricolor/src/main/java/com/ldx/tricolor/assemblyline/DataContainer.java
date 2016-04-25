@@ -19,4 +19,6 @@ public interface DataContainer {
 
   public InputStream open();
 
+  public void finish();
+
 }

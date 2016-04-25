@@ -4,12 +4,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.ldx.tricolor.api.Request;
-import com.ldx.tricolor.api.Tricolor;
 import com.ldx.tricolor.assemblyline.DataContainer;
 import com.ldx.tricolor.assemblyline.Intermediates;
+import com.ldx.tricolor.utils.Logger;
 
 import java.io.InputStream;
 
+import static com.ldx.tricolor.assemblyline.Intermediates.checkCompleted;
+import static com.ldx.tricolor.assemblyline.Intermediates.checkMemory;
 import static com.ldx.tricolor.assemblyline.Intermediates.validIntermediates;
 
 /**
@@ -29,13 +31,11 @@ public class BaseImageDecoder implements ImageDecoder {
 
     validIntermediates(intermediates);
 
-    if (intermediates.getBitmap() != null) {
+    if (checkCompleted(intermediates)) {
       return intermediates;
     }
 
-    intermediates = intermediates.getTricolor().getMemoryCacheFunc().call(intermediates);
-
-    if (intermediates.getBitmap() != null) {
+    if (checkMemory(intermediates)) {
       return intermediates;
     }
 
@@ -47,17 +47,17 @@ public class BaseImageDecoder implements ImageDecoder {
 
     InputStream is = container.open();
 
-    // TODO: can be better. the source width and height could be cached.
-    BitmapFactory.Options options = new BitmapFactory.Options();
-    options.inJustDecodeBounds = true;
-    BitmapFactory.decodeStream(is, null, options);
+    // TODO: can be better. The source width and height could be cached. not decode for options every time.
+    BitmapFactory.Options options = decodeForOptions(is);
+
+    container.finish();
 
     is = container.open();
 
-    options.inJustDecodeBounds = false;
-    Request.RequestOptions requestOptions = intermediates.getRawRequest().options;
-    options.inSampleSize = getSampleSize(options.outWidth, options.outHeight, requestOptions.width, requestOptions.height);
-    Bitmap result = BitmapFactory.decodeStream(is, null, options);
+    //TODO should consider the bitmap exif
+    Bitmap result = decodeForBitmap(is, options, intermediates.getRawRequest().options);
+    container.finish();
+
     if (result == null) {
       throw new IllegalStateException("Bitmap can not be decoded.");
     }
@@ -70,9 +70,50 @@ public class BaseImageDecoder implements ImageDecoder {
     return intermediates;
   }
 
-  public int getSampleSize(int outWidth, int outHeight, int desireWidth, int desireHeight) {
-    //TODO impl sample size
-    return 1;
+  public Bitmap decodeForBitmap(InputStream is, BitmapFactory.Options rawOptions, Request.RequestOptions requestOptions) {
+    rawOptions.inJustDecodeBounds = false;
+    rawOptions.inSampleSize =
+        getSampleSize(
+            rawOptions.outWidth, rawOptions.outHeight,
+            requestOptions.width, requestOptions.height,
+            requestOptions);
+    return BitmapFactory.decodeStream(is, null, rawOptions);
+  }
+
+  public BitmapFactory.Options decodeForOptions(InputStream is) {
+    BitmapFactory.Options options = new BitmapFactory.Options();// TODO cache the Options.
+    options.inJustDecodeBounds = true;
+    BitmapFactory.decodeStream(is, null, options);
+    return options;
+  }
+
+  public int getSampleSize(int outWidth, int outHeight, int desireWidth, int desireHeight, Request.RequestOptions options) {
+    Logger.v("Calculated the sample size, " + "outWidth = [" + outWidth + "], outHeight = [" + outHeight + "], desireWidth = [" + desireWidth + "], desireHeight = [" + desireHeight + "], options = [" + options + "]");
+    //TODO desireWidth and desireHeight don't doing anything with ImageTarget, which is not correct.
+    int sampleSize = 1;
+    if (outHeight <= desireHeight && outWidth <= desireWidth) {
+      Logger.v("Sample size calculated as " + sampleSize);
+      return sampleSize;
+    }
+
+    if (!options.centerInside && !options.centerCrop) {
+      Logger.v("Sample size calculated as" + sampleSize);
+      return sampleSize;
+    }
+
+    // Now centerInside or centerCrop is true;
+
+    int heightRatio = outHeight / desireHeight;
+    int widthRatio = outWidth / desireWidth;
+    // Priority to centerInside.
+    if (options.centerInside) {
+      sampleSize = heightRatio > widthRatio ? heightRatio : widthRatio;
+    } else {
+      sampleSize = Math.max(heightRatio > widthRatio ? widthRatio : heightRatio, 1);
+    }
+
+    Logger.v("Sample size calculated as" + sampleSize);
+    return sampleSize;
   }
 
 }

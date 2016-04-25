@@ -29,20 +29,12 @@ public class Request {
     return "[Uri = " + uri + "; RequestOptions = " + options.toString() + "]";
   }
 
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    return super.equals(o);
-  }
-
   public static class RequestOptions {
     // Demands of load
     public int width;
     public int height;
+    public boolean centerCrop;
+    public boolean centerInside;
 
     // Demands of display
     public boolean setError;
@@ -62,8 +54,11 @@ public class Request {
     // Copy function
     public RequestOptions(RequestOptions options) {
 
+
       width = options.width;
       height = options.height;
+      centerCrop = options.centerCrop;
+      centerInside = options.centerInside;
 
       setError = options.setError;
       errorResId = options.errorResId;
@@ -75,6 +70,7 @@ public class Request {
       cacheInMemory = options.cacheInMemory;
     }
 
+    //TODO write a automatically util to generate toString() and hashcode
     @Override
     public String toString() {
       return "[cacheInMemory = " + cacheInMemory + "; " +

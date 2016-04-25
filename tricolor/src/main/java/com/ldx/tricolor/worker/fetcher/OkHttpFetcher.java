@@ -15,6 +15,8 @@ import okhttp3.Response;
  * EMAIL : danxionglei@foxmail.com
  * DATE : 16/3/27
  *
+ * //TODO Now I integrate okhttp myself. It's not very good, I want users to demand which web module to use.
+ *
  * @author ldx
  */
 public class OkHttpFetcher extends FetchHandler {
