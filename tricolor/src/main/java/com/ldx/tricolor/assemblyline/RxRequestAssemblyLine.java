@@ -3,6 +3,7 @@ package com.ldx.tricolor.assemblyline;
 import com.ldx.tricolor.api.Request;
 import com.ldx.tricolor.api.Tricolor;
 import com.ldx.tricolor.utils.Logger;
+import com.ldx.tricolor.utils.Utils;
 import com.ldx.tricolor.worker.KeyGenerator;
 
 import rx.Observable;

@@ -41,13 +41,13 @@ public class LruMemoryCache extends BaseMemoryCacheFunc {
 
   @Override
   public void put(String key, Bitmap bitmap) {
-    Logger.v("Key [" + key + "] is put in memory cache with bitmap [" + bitmap + "]");
+    Logger.v("Key [%s] is put in memory cache with bitmap [%s]", key, bitmap);
     cache.put(key, bitmap);
   }
 
   @Override
   public void remove(String key) {
-    Logger.v("Key [" + key + "] is removed from memory cache.");
+    Logger.v("Key [%s] is removed from memory cache.", key);
     cache.remove(key);
   }
 

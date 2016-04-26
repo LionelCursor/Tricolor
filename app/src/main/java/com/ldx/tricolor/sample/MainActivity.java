@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
     ImageView mImageView = (ImageView) findViewById(R.id.image);
     Logger.time();
-    Tricolor.init(this);
     Tricolor.getInstance().load(Uri.parse(url)).into(mImageView);
     Logger.e("mImageView2 inited.");
     ImageView mImageView2 = (ImageView) findViewById(R.id.image2);

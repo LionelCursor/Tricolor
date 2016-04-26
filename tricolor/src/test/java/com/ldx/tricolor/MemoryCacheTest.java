@@ -29,16 +29,9 @@ public class MemoryCacheTest {
     func = new LruMemoryCache(4096);
   }
 
-  @Test
+  @Test(expected = IllegalArgumentException.class)
   public void testInit() {
-    try {
-      func = new LruMemoryCache(0);
-      Assert.assertTrue(false);
-    } catch (Exception e) {
-      if (!(e instanceof IllegalArgumentException)) {
-        Assert.assertTrue(false);
-      }
-    }
+    func = new LruMemoryCache(0);
   }
 
   @Test
@@ -53,7 +46,6 @@ public class MemoryCacheTest {
     prepare();
     Bitmap bitmap = Mockito.mock(Bitmap.class);
     Mockito.when(bitmap.getByteCount()).thenReturn(100);
-    Mockito.when(bitmap.getAllocationByteCount()).thenReturn(100);
     func.put("abc", bitmap);
     Assert.assertNotNull(bitmap);
     Assert.assertNotNull(func.get("abc"));

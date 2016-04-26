@@ -6,7 +6,6 @@ import com.ldx.tricolor.api.Tricolor;
 import com.ldx.tricolor.assemblyline.DataContainer;
 import com.ldx.tricolor.assemblyline.Intermediates;
 import com.ldx.tricolor.utils.Logger;
-import com.ldx.tricolor.worker.memory.MemoryCacheFunc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +56,7 @@ public class ImageFetcherImpl implements ImageFetcher {
           "ImageFetcher.\n Maybe, you could extends FetchHandler and add it for ImageFetcher yourself.");
     }
 
-    Logger.v("Uri is dispatched to FetchHandler [" + fetchHandler.getClass().getSimpleName() + "]");
+    Logger.v("Uri is dispatched to FetchHandler [%s]", fetchHandler.getClass().getSimpleName());
     return fetchHandler.handle(uri, tricolor);
   }
 
@@ -80,7 +79,7 @@ public class ImageFetcherImpl implements ImageFetcher {
 
     DataContainer data = fetch(intermediates.getRawRequest().uri, intermediates.getTricolor());
 
-    Logger.v("Data got.");
+    Logger.v("DataContainer got.");
     intermediates.setDataContainer(data);
     return intermediates;
   }

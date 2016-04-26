@@ -35,6 +35,8 @@ public class BaseImageDecoder implements ImageDecoder {
       return intermediates;
     }
 
+    Logger.v("Decoder starts to process the intermediates.");
+
     if (checkMemory(intermediates)) {
       return intermediates;
     }
@@ -45,14 +47,18 @@ public class BaseImageDecoder implements ImageDecoder {
       throw new IllegalStateException("The data container passed down from imageFetcher is null.");
     }
 
+    Logger.v("Decoder starts to open data stream.");
     InputStream is = container.open();
+    Logger.v("Data stream got.");
 
     // TODO: can be better. The source width and height could be cached. not decode for options every time.
     BitmapFactory.Options options = decodeForOptions(is);
 
     container.finish();
 
+    Logger.v("Decoder starts to open data stream again.");
     is = container.open();
+    Logger.v("Data stream got.");
 
     //TODO should consider the bitmap exif
     Bitmap result = decodeForBitmap(is, options, intermediates.getRawRequest().options);

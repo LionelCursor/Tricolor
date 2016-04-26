@@ -65,7 +65,7 @@ public class Logger {
 
   private String detailLocation() {
     StackTraceElement element = new Throwable().getStackTrace()[5];
-    return String.format("%s#%s():%d", element.getFileName(), element.getMethodName(), element.getLineNumber());
+    return String.format("%s(%s:%d)", element.getMethodName(), element.getFileName(), element.getLineNumber());
   }
 
   private String wrapWhen(String message) {
@@ -73,14 +73,14 @@ public class Logger {
     if (startTime == null) {
       return message;
     }
-    return String.format("%s@(%d ms used)", message, System.currentTimeMillis() - startTime);
+    return String.format("%s (%d ms used)", message, System.currentTimeMillis() - startTime);
   }
 
   private String wrapWhere(String message) {
     if (!shouldLogWhere) {
       return message;
     }
-    return message + "  @" + detailLocation();
+    return message + " [" + detailLocation() + "]";
   }
 
   private String wrap(String message, Object... objects) {

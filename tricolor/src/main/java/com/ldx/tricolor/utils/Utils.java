@@ -1,5 +1,7 @@
 package com.ldx.tricolor.utils;
 
+import android.util.Base64;
+
 /**
  * EMAIL : danxionglei@foxmail.com
  * DATE : 16/3/19
@@ -16,5 +18,8 @@ public class Utils {
     }
   }
 
+  public static String base64(String message) {
+    return new String(Base64.encode(message.getBytes(), Base64.NO_WRAP));
+  }
 
 }
