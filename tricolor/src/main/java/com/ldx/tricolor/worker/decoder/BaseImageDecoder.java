@@ -52,7 +52,9 @@ public class BaseImageDecoder implements ImageDecoder {
     Logger.v("Data stream got.");
 
     // TODO: can be better. The source width and height could be cached. not decode for options every time.
+    Logger.v("Decoding for the options of this stream");
     BitmapFactory.Options options = decodeForOptions(is);
+    Logger.v("Options got [outWidth = %d, outHeight = %d]", options.outWidth, options.outHeight);
 
     container.finish();
 
@@ -61,7 +63,9 @@ public class BaseImageDecoder implements ImageDecoder {
     Logger.v("Data stream got.");
 
     //TODO should consider the bitmap exif
+    Logger.v("Decoding for the bitmap");
     Bitmap result = decodeForBitmap(is, options, intermediates.getRawRequest().options);
+    Logger.v("Decoding for the bitmap finished");
     container.finish();
 
     if (result == null) {
@@ -95,7 +99,7 @@ public class BaseImageDecoder implements ImageDecoder {
 
   public int getSampleSize(int outWidth, int outHeight, int desireWidth, int desireHeight, Request.RequestOptions options) {
     Logger.v("Calculated the sample size, " + "outWidth = [" + outWidth + "], outHeight = [" + outHeight + "], desireWidth = [" + desireWidth + "], desireHeight = [" + desireHeight + "], options = [" + options + "]");
-    //TODO desireWidth and desireHeight don't doing anything with ImageTarget, which is not correct.
+    //TODO !!!desireWidth and desireHeight don't doing anything with ImageTarget, which is not correct.
     int sampleSize = 1;
     if (outHeight <= desireHeight && outWidth <= desireWidth) {
       Logger.v("Sample size calculated as " + sampleSize);

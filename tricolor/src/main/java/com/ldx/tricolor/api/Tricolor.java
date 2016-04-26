@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.ldx.tricolor.api.Request.RequestOptions;
 import com.ldx.tricolor.assemblyline.RequestAssemblyLine;
-import com.ldx.tricolor.worker.KeyGenerator;
+import com.ldx.tricolor.worker.pretreat.Pretreatment;
 import com.ldx.tricolor.worker.decoder.ImageDecoder;
 import com.ldx.tricolor.worker.disk.DiskCacheFunc;
 import com.ldx.tricolor.worker.fetcher.ImageFetcher;
@@ -45,7 +45,7 @@ public class Tricolor {
 
   private ImageFetcher fetcher;
 
-  private KeyGenerator keyGenerator;
+  private Pretreatment pretreatment;
 
   // Private variable of this tricolor
   private RequestAssemblyLine requestAssemblyLine;
@@ -62,7 +62,7 @@ public class Tricolor {
     fetcher = builder.imageFetcher;
     isLoggingEnabled = builder.isLoggingEnabled;
     defaultRequestOptions = builder.defaultRequestOptions;
-    keyGenerator = builder.keyGenerator;
+    pretreatment = builder.pretreatment;
     requestAssemblyLine = builder.requestAssemblyLine;
     // Note
     requestAssemblyLine.with(this);
@@ -184,8 +184,8 @@ public class Tricolor {
     return defaultRequestOptions;
   }
 
-  public KeyGenerator getKeyGenerator() {
-    return keyGenerator;
+  public Pretreatment getPretreatment() {
+    return pretreatment;
   }
 
 

@@ -1,13 +1,10 @@
 package com.ldx.tricolor.api;
 
 import android.content.Context;
-import android.util.DisplayMetrics;
 
 import com.ldx.tricolor.api.Request.RequestOptions;
 import com.ldx.tricolor.assemblyline.RequestAssemblyLine;
 import com.ldx.tricolor.assemblyline.RxRequestAssemblyLine;
-import com.ldx.tricolor.assemblyline.RxRequestAssemblyLine.BaseKeyGenerator;
-import com.ldx.tricolor.worker.KeyGenerator;
 import com.ldx.tricolor.worker.decoder.BaseImageDecoder;
 import com.ldx.tricolor.worker.decoder.ImageDecoder;
 import com.ldx.tricolor.worker.disk.DiskCacheFunc;
@@ -16,6 +13,8 @@ import com.ldx.tricolor.worker.fetcher.ImageFetcher;
 import com.ldx.tricolor.worker.fetcher.ImageFetcherImpl;
 import com.ldx.tricolor.worker.memory.LruMemoryCache;
 import com.ldx.tricolor.worker.memory.MemoryCacheFunc;
+import com.ldx.tricolor.worker.pretreat.BasePretreatment;
+import com.ldx.tricolor.worker.pretreat.Pretreatment;
 
 import java.io.File;
 
@@ -33,9 +32,8 @@ public class DefaultConfig {
 
   public static RequestOptions defaultRequestOptions(Context context) {
     RequestOptions options = new RequestOptions();
-    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-    options.width = metrics.widthPixels;
-    options.height = metrics.heightPixels;
+    options.width = -1;
+    options.height = -1;
     options.centerCrop = true;
     options.centerInside = false;
     options.cacheInDisk = true;
@@ -54,8 +52,8 @@ public class DefaultConfig {
     return new UnlimitedDiskCacheFunc(cacheDir);
   }
 
-  public static KeyGenerator defaultKeyGenerator() {
-    return new BaseKeyGenerator();
+  public static Pretreatment defaultPretreatment() {
+    return new BasePretreatment();
   }
 
   public static ImageDecoder defaultDecoder() {

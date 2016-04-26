@@ -1,4 +1,4 @@
-package com.ldx.tricolor.worker;
+package com.ldx.tricolor.worker.pretreat;
 
 import com.ldx.tricolor.assemblyline.Intermediates;
 
@@ -10,7 +10,7 @@ import rx.functions.Func1;
  *
  * @author ldx
  */
-public interface KeyGenerator extends Func1<Intermediates, Intermediates> {
+public interface Pretreatment extends Func1<Intermediates, Intermediates> {
   @Override
   Intermediates call(Intermediates intermediates);
 }

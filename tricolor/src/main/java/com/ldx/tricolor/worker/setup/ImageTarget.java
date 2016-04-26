@@ -12,6 +12,11 @@ import rx.functions.Action1;
  */
 public interface ImageTarget extends Action1<Intermediates> {
 
+  public int getRequireWidth();
+
+  public int getRequireHeight();
+
+
   @Override
   public void call(Intermediates intermediates);
 }

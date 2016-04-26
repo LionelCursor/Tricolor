@@ -21,6 +21,27 @@ public class SimpleImageTarget implements ImageTarget {
     reference = new WeakReference<>(view);
   }
 
+  /**
+   * @return Maybe 0
+   */
+  @Override
+  public int getRequireWidth() {
+    ImageView view = reference.get();
+    if (view == null) {
+      return 0;
+    }
+    return view.getWidth();
+  }
+
+  @Override
+  public int getRequireHeight() {
+    ImageView view = reference.get();
+    if (view == null) {
+      return 0;
+    }
+    return view.getHeight();
+  }
+
   @Override
   public void call(Intermediates intermediates) {
     ImageView imageView = reference.get();

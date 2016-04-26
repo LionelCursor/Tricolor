@@ -6,7 +6,6 @@ import android.widget.ImageView;
 import com.ldx.tricolor.api.Request.RequestOptions;
 import com.ldx.tricolor.worker.setup.ImageTarget;
 import com.ldx.tricolor.worker.setup.SimpleImageTarget;
-import com.ldx.tricolor.utils.Utils;
 
 /**
  * The builder pattern of Request, it will create a request which contains the detail message in it.
@@ -131,7 +130,9 @@ public class RequestCreator {
   }
 
   public void into(ImageTarget target) {
-    Utils.checkNotNull(target);
+    if (target == null) {
+      throw new IllegalArgumentException("ImageTarget can not be null.");
+    }
     this.target = target;
     // Now, we have target
     // And Uri has been prepared when construct
@@ -139,6 +140,10 @@ public class RequestCreator {
     checkOptions();
     // Dispatch this request.
     tricolor.dispatchRequest(new Request(this));
+  }
+
+  public void asBitmap() {
+    //TODO create callback pattern or observable pattern.
   }
 
   public void into(ImageView view) {

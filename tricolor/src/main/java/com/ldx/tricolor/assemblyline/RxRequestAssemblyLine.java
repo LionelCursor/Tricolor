@@ -3,8 +3,6 @@ package com.ldx.tricolor.assemblyline;
 import com.ldx.tricolor.api.Request;
 import com.ldx.tricolor.api.Tricolor;
 import com.ldx.tricolor.utils.Logger;
-import com.ldx.tricolor.utils.Utils;
-import com.ldx.tricolor.worker.KeyGenerator;
 
 import rx.Observable;
 import rx.Subscription;
@@ -50,10 +48,10 @@ public class RxRequestAssemblyLine implements RequestAssemblyLine {
 
   // Key generated
   public RxRequestAssemblyLine generateKey() {
-    if (tricolor.getKeyGenerator() == null) {
+    if (tricolor.getPretreatment() == null) {
       throw new IllegalStateException("Must have key generator.");
     }
-    observable = observable.map(tricolor.getKeyGenerator());
+    observable = observable.map(tricolor.getPretreatment());
     return this;
   }
 
@@ -132,22 +130,5 @@ public class RxRequestAssemblyLine implements RequestAssemblyLine {
         .decode()
         .process()
         .subscribe();
-  }
-
-  public static class BaseKeyGenerator implements KeyGenerator {
-
-    @Override
-    public Intermediates call(Intermediates intermediates) {
-      if (intermediates == null) {
-        throw new IllegalStateException("Intermediates can not be null.");
-      }
-      Request request = intermediates.getRawRequest();
-      if (request == null) {
-        throw new IllegalStateException("Request of intermediates can not be null.");
-      }
-      Logger.time();
-      intermediates.setKey(request.uri + "-" + request.options.width + "x" + request.options.height);
-      return intermediates;
-    }
   }
 }
