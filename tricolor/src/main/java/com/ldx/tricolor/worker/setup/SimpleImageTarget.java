@@ -1,5 +1,7 @@
 package com.ldx.tricolor.worker.setup;
 
+import android.graphics.Bitmap;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
 import com.ldx.tricolor.assemblyline.Intermediates;
@@ -30,7 +32,12 @@ public class SimpleImageTarget implements ImageTarget {
     if (view == null) {
       return 0;
     }
-    return view.getWidth();
+    int width = view.getWidth();
+    if (width <= 0) {
+      view.getMaxWidth();
+    }
+
+    return width;
   }
 
   @Override
@@ -39,7 +46,30 @@ public class SimpleImageTarget implements ImageTarget {
     if (view == null) {
       return 0;
     }
-    return view.getHeight();
+
+    int height = view.getHeight();
+    if (height <= 0) {
+      height = view.getMaxHeight();
+    }
+    return height;
+  }
+
+  @Override
+  public void setPlaceholder(int resId) {
+    ImageView view = reference.get();
+    if (view == null) {
+      return;
+    }
+    view.setImageResource(resId);
+  }
+
+  @Override
+  public void setError(int resId) {
+    ImageView view = reference.get();
+    if (view == null) {
+      return;
+    }
+    view.setImageResource(resId);
   }
 
   @Override
@@ -48,7 +78,10 @@ public class SimpleImageTarget implements ImageTarget {
     if (imageView == null) {
       return;
     }
-    imageView.setImageBitmap(intermediates.getBitmap());
+    Bitmap bitmap = intermediates.getBitmap();
+    imageView.setAlpha(0.5f);
+    imageView.setImageBitmap(bitmap);
+    imageView.animate().setDuration(400).setInterpolator(new LinearInterpolator()).alpha(1f).start();
     Logger.v("Tricolor has set bitmap to image target successfully.");
   }
 }

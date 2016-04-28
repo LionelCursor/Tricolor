@@ -10,7 +10,7 @@ import com.ldx.tricolor.worker.decoder.ImageDecoder;
 import com.ldx.tricolor.worker.disk.DiskCacheFunc;
 import com.ldx.tricolor.worker.disk.UnlimitedDiskCacheFunc;
 import com.ldx.tricolor.worker.fetcher.ImageFetcher;
-import com.ldx.tricolor.worker.fetcher.ImageFetcherImpl;
+import com.ldx.tricolor.worker.fetcher.BaseImageFetcher;
 import com.ldx.tricolor.worker.memory.LruMemoryCache;
 import com.ldx.tricolor.worker.memory.MemoryCacheFunc;
 import com.ldx.tricolor.worker.pretreat.BasePretreatment;
@@ -32,8 +32,8 @@ public class DefaultConfig {
 
   public static RequestOptions defaultRequestOptions(Context context) {
     RequestOptions options = new RequestOptions();
-    options.width = -1;
-    options.height = -1;
+    options.width = 0;
+    options.height = 0;
     options.centerCrop = true;
     options.centerInside = false;
     options.cacheInDisk = true;
@@ -61,7 +61,7 @@ public class DefaultConfig {
   }
 
   public static ImageFetcher defaultFetcher() {
-    return new ImageFetcherImpl();
+    return new BaseImageFetcher();
   }
 
 }

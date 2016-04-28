@@ -16,22 +16,22 @@ import java.util.List;
  *
  * @author ldx
  */
-public class ImageFetcherImpl implements ImageFetcher {
+public class BaseImageFetcher implements ImageFetcher {
 
   private List<FetchHandler> fetchHandlers;
 
-  public ImageFetcherImpl() {
+  public BaseImageFetcher() {
     this(defaultHandlers());
   }
 
   private static List<FetchHandler> defaultHandlers() {
-    List<FetchHandler> handlers = new ArrayList<>(10);
+    List<FetchHandler> handlers = new ArrayList<>(5);
     handlers.add(new LocalDataHandler());
     handlers.add(new OkHttpFetcher());
     return handlers;
   }
 
-  public ImageFetcherImpl(List<FetchHandler> fetchHandlers) {
+  public BaseImageFetcher(List<FetchHandler> fetchHandlers) {
     if (fetchHandlers == null) {
       throw new IllegalArgumentException("Image imageFetcher can not work without any fetchHandler.");
     }

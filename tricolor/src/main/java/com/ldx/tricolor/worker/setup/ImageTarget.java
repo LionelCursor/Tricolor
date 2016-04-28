@@ -16,6 +16,10 @@ public interface ImageTarget extends Action1<Intermediates> {
 
   public int getRequireHeight();
 
+  public void setPlaceholder(int resId);
+
+  public void setError(int resId);
+
 
   @Override
   public void call(Intermediates intermediates);

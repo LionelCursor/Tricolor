@@ -119,6 +119,7 @@ public class RequestCreator {
   public RequestCreator noPlaceholder() {
     checkOptions();
     options.setPlaceholder = false;
+    options.placeholderResId = 0;
     return this;
   }
 
